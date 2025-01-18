@@ -6,7 +6,8 @@ import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
 import Inventory from "./components/inventory";
 import Mode from "./components/mode";
-import AddPharmacist from "./components/pharmacist";
+import AddPharmacist from "./components/pharmacist/pharmacist";
+import ViewPharmacist from "./components/pharmacist/ViewPharmacist";
 export default function Dashboard() {
   // State to track the active view
   const [activeView, setActiveView] = useState("dashboard");
@@ -19,6 +20,9 @@ export default function Dashboard() {
 
       case "add-pharmacist":
         return <AddPharmacist />;
+
+      case "view-pharmacist":
+        return <ViewPharmacist />;
 
       case "reports":
         return <Inventory />;
