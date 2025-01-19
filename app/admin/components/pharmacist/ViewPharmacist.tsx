@@ -2,21 +2,26 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import EditPharmacist from "./EditPharmacist"; // Import the new component
 
 interface Pharmacist {
-  id: number; // Replace with `string` if IDs are strings
-  name: string;
+  name: any;
+  id: number;
+  email: string;
+  phone: string;
+  address: string;
+  qualifications: string;
   licenseNumber: string;
+  password: string;
+  confirmPassword: string;
 }
 
 function ViewPharmacist() {
-  const router = useRouter();
   const [pharmacists, setPharmacists] = useState<Pharmacist[]>([]);
-  const [filteredPharmacists, setFilteredPharmacists] = useState<Pharmacist[]>(
-    []
-  );
+  const [filteredPharmacists, setFilteredPharmacists] = useState<Pharmacist[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPharmacist, setSelectedPharmacist] = useState<Pharmacist | null>(null);
+  const [isEditing, setIsEditing] = useState(false); // Track editing state
 
   useEffect(() => {
     fetch("https://678b5db71a6b89b27a2a3042.mockapi.io/pharmacist")
@@ -39,15 +44,15 @@ function ViewPharmacist() {
   };
 
   const handleEdit = (id: number) => {
-    console.log("Edit pharmacist with ID:", id);
+    const pharmacist = pharmacists.find((p) => p.id === id);
+    setSelectedPharmacist(pharmacist || null);
+    setIsEditing(true); // Switch to edit mode
   };
 
   const handleDelete = (id: number) => {
     console.log("Delete pharmacist with ID:", id);
     setPharmacists(pharmacists.filter((pharmacist) => pharmacist.id !== id));
-    setFilteredPharmacists(
-      filteredPharmacists.filter((pharmacist) => pharmacist.id !== id)
-    );
+    setFilteredPharmacists(filteredPharmacists.filter((pharmacist) => pharmacist.id !== id));
   };
 
   const viewDetails = (id: number) => {
@@ -56,19 +61,22 @@ function ViewPharmacist() {
   };
 
   const backToList = () => {
-    setSelectedPharmacist(null); // Return to the list view
+    setSelectedPharmacist(null);
+    setIsEditing(false); // Exit edit mode
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-screen-xl mx-auto">
-        {selectedPharmacist ? (
+        {isEditing && selectedPharmacist ? (
+          // Render the edit component
+          <EditPharmacist pharmacist={selectedPharmacist} onBack={backToList} />
+        ) : selectedPharmacist ? (
           // Render the selected pharmacist's details
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-3xl font-semibold mb-4">Pharmacist Details</h2>
             <p><strong>Name:</strong> {selectedPharmacist.name}</p>
             <p><strong>License No:</strong> {selectedPharmacist.licenseNumber}</p>
-            {/* Add more details if needed */}
             <button
               onClick={backToList}
               className="mt-4 bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-700"
