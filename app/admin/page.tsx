@@ -9,6 +9,7 @@ import Mode from "./components/mode";
 import AddPharmacist from "./components/pharmacist/pharmacist";
 import ViewPharmacist from "./components/pharmacist/ViewPharmacist";
 import EditPharmacist from "./components/pharmacist/EditPharmacist";
+import AddDoctor from "./components/doctor/addDoctor";
 
 export default function Dashboard() {
   // State to track the active view
@@ -38,7 +39,8 @@ export default function Dashboard() {
       case "change-mode":
         return <Mode />;
 
-     
+      case "add-doctor":
+        return <AddDoctor />;
         
       default:
         return <AdminDashboard />;

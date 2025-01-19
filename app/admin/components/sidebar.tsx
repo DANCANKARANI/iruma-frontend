@@ -20,7 +20,7 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
     <aside
       className={`${
         isSidebarOpen ? "w-64" : "w-20"
-      } bg-customBg text-white flex flex-col h-full transition-all duration-300`}
+      } bg-customBg text-white flex flex-col h-screen transition-all duration-300 sticky top-0 z-50 overflow-y-auto`}
     >
       {/* Header Section */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-gray-700">
