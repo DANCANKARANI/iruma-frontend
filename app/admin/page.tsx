@@ -10,6 +10,7 @@ import AddPharmacist from "./components/pharmacist/pharmacist";
 import ViewPharmacist from "./components/pharmacist/ViewPharmacist";
 import EditPharmacist from "./components/pharmacist/EditPharmacist";
 import AddDoctor from "./components/doctor/addDoctor";
+import ViewDoctors from "./components/doctor/viewDoctor";
 
 export default function Dashboard() {
   // State to track the active view
@@ -41,6 +42,9 @@ export default function Dashboard() {
 
       case "add-doctor":
         return <AddDoctor />;
+      
+      case "view-doctor":
+        return <ViewDoctors />;
         
       default:
         return <AdminDashboard />;
