@@ -11,12 +11,12 @@ interface Doctor {
 
 export default function ViewDoctors() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null); // Selected doctor details
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    // Fetch doctors from the API
     async function fetchDoctors() {
       try {
         const response = await fetch("https://678b5db71a6b89b27a2a3042.mockapi.io/doctors");
@@ -35,7 +35,6 @@ export default function ViewDoctors() {
     fetchDoctors();
   }, []);
 
-  // Filter doctors based on the search query in real time
   const filteredDoctors = searchQuery
     ? doctors.filter(
         (doctor) =>
@@ -44,6 +43,22 @@ export default function ViewDoctors() {
           doctor.email.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : doctors;
+
+  const handleView = (doctor: Doctor) => {
+    setSelectedDoctor(doctor); // Set selected doctor to show details
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedDoctor(null); // Close the details view
+  };
+
+  const handleEdit = (id: string) => {
+    alert(`Edit functionality for doctor ID: ${id}`);
+  };
+
+  const handleDelete = (id: string) => {
+    alert(`Delete functionality for doctor ID: ${id}`);
+  };
 
   return (
     <div className="p-4 h-full overflow-hidden flex flex-col">
@@ -87,13 +102,22 @@ export default function ViewDoctors() {
                   <td className="border border-gray-300 p-2">{doctor.specialty}</td>
                   <td className="border border-gray-300 p-2">{doctor.email}</td>
                   <td className="border border-gray-300 p-2">
-                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
+                    <button
+                      className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                      onClick={() => handleView(doctor)}
+                    >
                       View
                     </button>
-                    <button className="bg-green-500 text-white px-3 py-1 rounded mr-2">
+                    <button
+                      className="bg-green-500 text-white px-3 py-1 rounded mr-2"
+                      onClick={() => handleEdit(doctor.id)}
+                    >
                       Edit
                     </button>
-                    <button className="bg-red-500 text-white px-3 py-1 rounded">
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={() => handleDelete(doctor.id)}
+                    >
                       Delete
                     </button>
                   </td>
@@ -108,6 +132,32 @@ export default function ViewDoctors() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Doctor Details Component */}
+      {selectedDoctor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded shadow-lg w-1/3">
+            <h2 className="text-xl font-bold mb-4">Doctor Details</h2>
+            <p className="mb-2">
+              <strong>Name:</strong> {selectedDoctor.name}
+            </p>
+            <p className="mb-2">
+              <strong>Specialty:</strong> {selectedDoctor.specialty}
+            </p>
+            <p className="mb-2">
+              <strong>Email:</strong> {selectedDoctor.email}
+            </p>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-gray-500 text-white px-3 py-1 rounded"
+                onClick={handleCloseDetails}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
