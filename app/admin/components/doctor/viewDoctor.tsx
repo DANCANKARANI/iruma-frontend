@@ -9,12 +9,13 @@ interface Doctor {
   email: string;
   phone: string;
   address: string;
-  licenseNumber:string;
+  licenseNumber: string;
 }
 
 export default function ViewDoctors() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null); // Selected doctor details
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null); // Selected doctor for viewing/editing
+  const [isEditing, setIsEditing] = useState(false); // Editing state
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,19 +49,39 @@ export default function ViewDoctors() {
     : doctors;
 
   const handleView = (doctor: Doctor) => {
-    setSelectedDoctor(doctor); // Set selected doctor to show details
+    setSelectedDoctor(doctor);
+    setIsEditing(false); // Ensure it's view-only
+  };
+
+  const handleEdit = (doctor: Doctor) => {
+    setSelectedDoctor(doctor);
+    setIsEditing(true); // Open editing mode
+  };
+
+  const handleSave = async (updatedDoctor: Doctor) => {
+    try {
+      const response = await fetch(`https://678b5db71a6b89b27a2a3042.mockapi.io/doctors/${updatedDoctor.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedDoctor),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save doctor details");
+      }
+      const updatedDoctorData = await response.json();
+      setDoctors((prev) =>
+        prev.map((doctor) => (doctor.id === updatedDoctorData.id ? updatedDoctorData : doctor))
+      );
+      setSelectedDoctor(null); // Close the edit view
+      setIsEditing(false);
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   const handleCloseDetails = () => {
-    setSelectedDoctor(null); // Close the details view
-  };
-
-  const handleEdit = (id: string) => {
-    alert(`Edit functionality for doctor ID: ${id}`);
-  };
-
-  const handleDelete = (id: string) => {
-    alert(`Delete functionality for doctor ID: ${id}`);
+    setSelectedDoctor(null);
+    setIsEditing(false);
   };
 
   return (
@@ -113,15 +134,9 @@ export default function ViewDoctors() {
                     </button>
                     <button
                       className="bg-green-500 text-white px-3 py-1 rounded mr-2"
-                      onClick={() => handleEdit(doctor.id)}
+                      onClick={() => handleEdit(doctor)}
                     >
                       Edit
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                      onClick={() => handleDelete(doctor.id)}
-                    >
-                      Delete
                     </button>
                   </td>
                 </tr>
@@ -138,38 +153,114 @@ export default function ViewDoctors() {
         </div>
       )}
 
-      {/* Doctor Details Component */}
+      {/* Doctor Details/Edit Component */}
       {selectedDoctor && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded shadow-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4">Doctor Details</h2>
-            <p className="mb-2">
-              <strong>Name:</strong> {selectedDoctor.name}
-            </p>
-            <p className="mb-2">
-              <strong>Specialty:</strong> {selectedDoctor.specialty}
-            </p>
-            <p className="mb-2">
-              <strong>Phone Number:</strong> {selectedDoctor.phone}
-            </p>
-            <p className="mb-2">
-              <strong>Email:</strong> {selectedDoctor.email}
-            </p>
-            <p className="mb-2">
-              <strong>License Number:</strong> {selectedDoctor.licenseNumber}
-            </p>
-            <p className="mb-2">
-              <strong>Address:</strong> {selectedDoctor.address}
-            </p>
-           
-            <div className="flex justify-end mt-4">
-              <button
-                className="bg-gray-500 text-white px-3 py-1 rounded"
-                onClick={handleCloseDetails}
-              >
-                Close
-              </button>
-            </div>
+            {isEditing ? (
+              <>
+                <h2 className="text-xl font-bold mb-4">Edit Doctor</h2>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSave(selectedDoctor);
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="w-full p-2 mb-2 border rounded"
+                    value={selectedDoctor.name}
+                    onChange={(e) =>
+                      setSelectedDoctor({ ...selectedDoctor, name: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="w-full p-2 mb-2 border rounded"
+                    value={selectedDoctor.specialty}
+                    onChange={(e) =>
+                      setSelectedDoctor({ ...selectedDoctor, specialty: e.target.value })
+                    }
+                  />
+                  <input
+                    type="email"
+                    className="w-full p-2 mb-2 border rounded"
+                    value={selectedDoctor.email}
+                    onChange={(e) =>
+                      setSelectedDoctor({ ...selectedDoctor, email: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="w-full p-2 mb-2 border rounded"
+                    value={selectedDoctor.phone}
+                    onChange={(e) =>
+                      setSelectedDoctor({ ...selectedDoctor, phone: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="w-full p-2 mb-2 border rounded"
+                    value={selectedDoctor.licenseNumber}
+                    onChange={(e) =>
+                      setSelectedDoctor({
+                        ...selectedDoctor,
+                        licenseNumber: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    className="w-full p-2 mb-2 border rounded"
+                    value={selectedDoctor.address}
+                    onChange={(e) =>
+                      setSelectedDoctor({ ...selectedDoctor, address: e.target.value })
+                    }
+                  />
+                  <div className="flex justify-end mt-4">
+                    <button
+                      className="bg-gray-500 text-white px-3 py-1 rounded mr-2"
+                      onClick={handleCloseDetails}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-blue-500 text-white px-3 py-1 rounded"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold mb-4">Doctor Details</h2>
+                <p className="mb-2">
+                  <strong>Name:</strong> {selectedDoctor.name}
+                </p>
+                <p className="mb-2">
+                  <strong>Specialty:</strong> {selectedDoctor.specialty}
+                </p>
+                <p className="mb-2">
+                  <strong>Phone Number:</strong> {selectedDoctor.phone}
+                </p>
+                <p className="mb-2">
+                  <strong>License Number:</strong> {selectedDoctor.licenseNumber}
+                </p>
+                <p className="mb-4">
+                  <strong>Email:</strong> {selectedDoctor.email}
+                </p>
+                <div className="flex justify-end">
+                  <button
+                    className="bg-gray-500 text-white px-3 py-1 rounded mr-2"
+                    onClick={handleCloseDetails}
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
