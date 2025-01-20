@@ -19,6 +19,8 @@ export default function ViewDoctors() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for delete confirmation dialog
+  const [doctorToDelete, setDoctorToDelete] = useState<Doctor | null>(null); // Doctor to delete
 
   useEffect(() => {
     async function fetchDoctors() {
@@ -74,6 +76,31 @@ export default function ViewDoctors() {
       );
       setSelectedDoctor(null); // Close the edit view
       setIsEditing(false);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleDelete = (doctor: Doctor) => {
+    setDoctorToDelete(doctor);
+    setShowDeleteConfirm(true); // Show confirmation dialog
+  };
+
+  const confirmDelete = async () => {
+    if (!doctorToDelete) return;
+
+    try {
+      const response = await fetch(
+        `https://678b5db71a6b89b27a2a3042.mockapi.io/doctors/${doctorToDelete.id}`,
+        { method: "DELETE" }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to delete doctor");
+      }
+
+      setDoctors((prev) => prev.filter((doctor) => doctor.id !== doctorToDelete.id));
+      setDoctorToDelete(null); // Reset the doctor to delete
+      setShowDeleteConfirm(false); // Close the confirmation dialog
     } catch (err: any) {
       setError(err.message);
     }
@@ -138,6 +165,12 @@ export default function ViewDoctors() {
                     >
                       Edit
                     </button>
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                      onClick={() => handleDelete(doctor)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -150,6 +183,30 @@ export default function ViewDoctors() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded shadow-lg w-1/3">
+            <h2 className="text-lg font-bold mb-4">Confirm Delete</h2>
+            <p>Are you sure you want to delete Dr. {doctorToDelete?.name}?</p>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-gray-500 text-white px-3 py-1 rounded mr-2"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 text-white px-3 py-1 rounded"
+                onClick={confirmDelete}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -172,49 +229,6 @@ export default function ViewDoctors() {
                     value={selectedDoctor.name}
                     onChange={(e) =>
                       setSelectedDoctor({ ...selectedDoctor, name: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="w-full p-2 mb-2 border rounded"
-                    value={selectedDoctor.specialty}
-                    onChange={(e) =>
-                      setSelectedDoctor({ ...selectedDoctor, specialty: e.target.value })
-                    }
-                  />
-                  <input
-                    type="email"
-                    className="w-full p-2 mb-2 border rounded"
-                    value={selectedDoctor.email}
-                    onChange={(e) =>
-                      setSelectedDoctor({ ...selectedDoctor, email: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="w-full p-2 mb-2 border rounded"
-                    value={selectedDoctor.phone}
-                    onChange={(e) =>
-                      setSelectedDoctor({ ...selectedDoctor, phone: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="w-full p-2 mb-2 border rounded"
-                    value={selectedDoctor.licenseNumber}
-                    onChange={(e) =>
-                      setSelectedDoctor({
-                        ...selectedDoctor,
-                        licenseNumber: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="w-full p-2 mb-2 border rounded"
-                    value={selectedDoctor.address}
-                    onChange={(e) =>
-                      setSelectedDoctor({ ...selectedDoctor, address: e.target.value })
                     }
                   />
                   <div className="flex justify-end mt-4">
@@ -243,7 +257,10 @@ export default function ViewDoctors() {
                   <strong>Specialty:</strong> {selectedDoctor.specialty}
                 </p>
                 <p className="mb-2">
-                  <strong>Phone Number:</strong> {selectedDoctor.phone}
+                  <strong>Phone:</strong> {selectedDoctor.phone}
+                </p>
+                <p className="mb-2">
+                  <strong>Address:</strong> {selectedDoctor.address}
                 </p>
                 <p className="mb-2">
                   <strong>License Number:</strong> {selectedDoctor.licenseNumber}
