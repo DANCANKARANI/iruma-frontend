@@ -7,6 +7,9 @@ interface Doctor {
   name: string;
   specialty: string;
   email: string;
+  phone: string;
+  address: string;
+  licenseNumber:string;
 }
 
 export default function ViewDoctors() {
@@ -147,8 +150,18 @@ export default function ViewDoctors() {
               <strong>Specialty:</strong> {selectedDoctor.specialty}
             </p>
             <p className="mb-2">
+              <strong>Phone Number:</strong> {selectedDoctor.phone}
+            </p>
+            <p className="mb-2">
               <strong>Email:</strong> {selectedDoctor.email}
             </p>
+            <p className="mb-2">
+              <strong>License Number:</strong> {selectedDoctor.licenseNumber}
+            </p>
+            <p className="mb-2">
+              <strong>Address:</strong> {selectedDoctor.address}
+            </p>
+           
             <div className="flex justify-end mt-4">
               <button
                 className="bg-gray-500 text-white px-3 py-1 rounded"
