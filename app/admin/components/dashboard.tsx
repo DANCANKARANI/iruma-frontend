@@ -1,7 +1,14 @@
+import { useTheme } from "./themeContext";
+
+
 export default function AdminDashboard(){
+  const { theme } = useTheme();
     return(
-        <div className="p-4 space-y-6">
-          {/* Status Cards */}
+      <div
+      className={`p-6 transition-colors duration-300 ${
+        theme === "dark" ? "bg-gray-100 text-white" : "bg-white text-black"
+      }`}
+    >          {/* Status Cards */}
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-green-100 p-4 rounded shadow">
               <p className="text-green-700 font-bold">Good</p>
