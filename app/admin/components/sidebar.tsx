@@ -10,11 +10,8 @@ import {
   FaPlus,
   FaEye,
 } from "react-icons/fa";
-import { useTheme } from "./themeContext";
 
 export default function Sidebar({ onSelect }: { onSelect: (view: string) => void }) {
-  const { theme, toggleTheme } = useTheme();
-
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isDoctorMenuOpen, setDoctorMenuOpen] = useState(false); // Track Doctor dropdown menu state
   const [isPharmacistMenuOpen, setPharmacistMenuOpen] = useState(false); // Track Pharmacist dropdown menu state
@@ -141,12 +138,12 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
         </button>
 
         <button
-            onClick={toggleTheme}
-            className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
-          >
-            <FaAdjust className="mr-4" />
-            <span>Change Mode</span>
-          </button>
+          onClick={() => onSelect("change-mode")}
+          className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+        >
+          <FaAdjust className="mr-4" />
+          {isSidebarOpen && <span>Change Mode</span>}
+        </button>
       </nav>
 
       {/* Footer Section */}
