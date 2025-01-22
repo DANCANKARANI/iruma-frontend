@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PatientReports from "./reports/patientsReports";
+import PharmacyReport from "./reports/pharmacyReport";
 
 export default function Reports() {
   // State to manage active report type
@@ -11,7 +12,7 @@ export default function Reports() {
       case "patients":
         return <PatientReports/>
       case "pharmacy":
-        return <div>Pharmacy Reports</div>;
+        return <PharmacyReport/>
       case "financial":
         return <div>Financial Reports</div>;
       case "doctors":
