@@ -1,6 +1,9 @@
 import { useState } from "react";
 import PatientReports from "./reports/patientsReports";
 import PharmacyReport from "./reports/pharmacyReport";
+import FinancialReports from "./reports/financialReport";
+import DoctorsReports from "./reports/doctorReport";
+import OperationReports from "./reports/operationReport";
 
 export default function Reports() {
   // State to manage active report type
@@ -14,11 +17,11 @@ export default function Reports() {
       case "pharmacy":
         return <PharmacyReport/>
       case "financial":
-        return <div>Financial Reports</div>;
+        return <FinancialReports/>
       case "doctors":
-        return <div>Doctor Reports</div>;
+        return <DoctorsReports/>
       case "operations":
-        return <div>Operations Reports</div>;
+        return <OperationReports/>
       default:
         return <div>Select a report type to view details.</div>;
     }
