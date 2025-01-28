@@ -4,7 +4,6 @@ import { SetStateAction, useState } from "react";
 import AdminDashboard from "./components/dashboard";
 import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
-import Inventory from "./components/inventory";
 import Mode from "./components/mode";
 import AddPharmacist from "./components/pharmacist/pharmacist";
 import ViewPharmacist from "./components/pharmacist/ViewPharmacist";
@@ -12,6 +11,7 @@ import EditPharmacist from "./components/pharmacist/EditPharmacist";
 import AddDoctor from "./components/doctor/addDoctor";
 import ViewDoctors from "./components/doctor/viewDoctor";
 import Reports from "./components/reports";
+import ApplicationSettings from "./components/settings";
 
 export default function Dashboard() {
   // State to track the active view
@@ -36,7 +36,7 @@ export default function Dashboard() {
         return <Reports/>
 
       case "settings":
-        return <Inventory />;
+        return <ApplicationSettings />;
 
       case "change-mode":
         return <Mode />;
@@ -45,10 +45,7 @@ export default function Dashboard() {
         return <AddDoctor />;
       
       case "view-doctor":
-        return <ViewDoctors />;
-        
-      default:
-        return <AdminDashboard />;
+        return <ViewDoctors />;    
     }
   };
 

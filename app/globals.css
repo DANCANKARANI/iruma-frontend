@@ -30,4 +30,20 @@ body[data-theme="dark"] {
   background-color: black;
   color: white;
 }
+/* Light Mode (default) */
+.light {
+  --bg-color: #f9fafb;
+  --text-color: #1f2937;
+}
+
+/* Dark Mode */
+.dark {
+  --bg-color: #0f0e0f;
+  --text-color: #f9fafb;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
 
