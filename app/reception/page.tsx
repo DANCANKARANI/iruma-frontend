@@ -6,6 +6,7 @@ import Sidebar from "./component/sidebar";
 import ReceptionDashboard from "./component/dashboard";
 import Navbar from "../admin/components/navbar";
 import BookAppointment from "./component/bookAppointment";
+import ViewAppointments from "./component/viewAppointments";
 
 
 
@@ -21,15 +22,16 @@ export default function receptionDashboard() {
 
       case "book-appointment":
         return <BookAppointment />;
-      
+        
+      case "view-appointments":
+        return <ViewAppointments />;
+  
      {/* case "view-patients":
         return <ViewPatients />;
 
     
 
-      case "view-appointments":
-        return <ViewAppointments />;
-
+      
       case "billing":
         return <Billing />;*/}
  
