@@ -101,7 +101,7 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
                   {isSidebarOpen && <span>View Appointments</span>}
                 </button>
                 <button
-                  onClick={() => onSelect("add-appointment")}
+                  onClick={() => onSelect("book-appointment")}
                   className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
                 >
                   <FaPlus className="mr-3" />

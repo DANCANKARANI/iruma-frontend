@@ -5,6 +5,7 @@ import { SetStateAction, useState } from "react";
 import Sidebar from "./component/sidebar";
 import ReceptionDashboard from "./component/dashboard";
 import Navbar from "../admin/components/navbar";
+import BookAppointment from "./component/bookAppointment";
 
 
 
@@ -17,18 +18,21 @@ export default function receptionDashboard() {
     switch (activeView) {
       case "reception-dashboard":
         return <ReceptionDashboard />;
+
+      case "book-appointment":
+        return <BookAppointment />;
       
      {/* case "view-patients":
         return <ViewPatients />;
 
-      case "add-appointment":
-        return <AddAppointment />;
+    
 
       case "view-appointments":
         return <ViewAppointments />;
 
       case "billing":
         return <Billing />;*/}
+ 
 
      
     }
