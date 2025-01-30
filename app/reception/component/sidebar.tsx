@@ -57,14 +57,14 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
             {isPatientMenuOpen && (
               <div className="pl-8 mt-1 space-y-1">
                 <button
-                  onClick={() => onSelect("view-patient")}
+                  onClick={() => onSelect("view-patients")}
                   className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
                 >
                   <FaEye className="mr-3" />
                   {isSidebarOpen && <span>View Patients</span>}
                 </button>
                 <button
-                  onClick={() => onSelect("add-patient")}
+                  onClick={() => onSelect("register-patient")}
                   className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
                 >
                   <FaPlus className="mr-3" />

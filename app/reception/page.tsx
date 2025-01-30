@@ -7,6 +7,8 @@ import ReceptionDashboard from "./component/dashboard";
 import Navbar from "../admin/components/navbar";
 import BookAppointment from "./component/bookAppointment";
 import ViewAppointments from "./component/viewAppointments";
+import RegisterPatient from "./component/registerPatient";
+import ViewPatients from "./component/viewPatients";
 
 
 
@@ -25,9 +27,14 @@ export default function receptionDashboard() {
         
       case "view-appointments":
         return <ViewAppointments />;
+
+      case "register-patient":
+        return <RegisterPatient />;
+
+      case "view-patients":
+        return <ViewPatients />
   
-     {/* case "view-patients":
-        return <ViewPatients />;
+     {/* 
 
     
 
