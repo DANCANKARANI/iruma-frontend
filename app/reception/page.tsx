@@ -9,6 +9,8 @@ import BookAppointment from "./component/bookAppointment";
 import ViewAppointments from "./component/viewAppointments";
 import RegisterPatient from "./component/registerPatient";
 import ViewPatients from "./component/viewPatients";
+import Setting from "./component/setting";
+import Billing from "./component/billing";
 
 
 
@@ -33,9 +35,15 @@ export default function receptionDashboard() {
 
       case "view-patients":
         return <ViewPatients />
+      
+      case "settings":
+        return <Setting/>
+      
+      case "billing":
+        return <Billing />
   
      {/* 
-
+n
     
 
       

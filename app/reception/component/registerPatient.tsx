@@ -31,7 +31,7 @@ export default function RegisterPatient() {
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
       <div className="w-full max-w-6xl bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-semibold text-gray-800 dark:text-white text-center mb-6">
-          Register Patient
+          Register Patient 
         </h2>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">

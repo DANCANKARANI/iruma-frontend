@@ -2,12 +2,22 @@
 "use client";
 
 import { useState } from "react";
-import { FaTachometerAlt, FaUserAlt, FaFileAlt, FaCogs, FaAdjust, FaChevronDown, FaPlus, FaEye } from "react-icons/fa";
+import {
+  FaTachometerAlt,
+  FaUserAlt,
+  FaFileAlt,
+  FaCogs,
+  FaAdjust,
+  FaChevronDown,
+  FaPlus,
+  FaEye,
+  FaFileInvoiceDollar, // Billing Icon
+} from "react-icons/fa";
 
 export default function Sidebar({ onSelect }: { onSelect: (view: string) => void }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [isPatientMenuOpen, setPatientMenuOpen] = useState(false); // Track Patient dropdown menu state
-  const [isAppointmentMenuOpen, setAppointmentMenuOpen] = useState(false); // Track Appointment dropdown menu state
+  const [isPatientMenuOpen, setPatientMenuOpen] = useState(false);
+  const [isAppointmentMenuOpen, setAppointmentMenuOpen] = useState(false);
 
   return (
     <div className="flex h-screen">
@@ -53,7 +63,6 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
                 />
               )}
             </button>
-            {/* Dropdown Menu */}
             {isPatientMenuOpen && (
               <div className="pl-8 mt-1 space-y-1">
                 <button
@@ -90,7 +99,6 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
                 />
               )}
             </button>
-            {/* Dropdown Menu */}
             {isAppointmentMenuOpen && (
               <div className="pl-8 mt-1 space-y-1">
                 <button
@@ -111,6 +119,16 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
             )}
           </div>
 
+          {/* Billing Button */}
+          <button
+            onClick={() => onSelect("billing")}
+            className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+          >
+            <FaFileInvoiceDollar className="mr-4" />
+            {isSidebarOpen && <span>Billing</span>}
+          </button>
+
+          {/* Settings & Mode Change */}
           <button
             onClick={() => onSelect("settings")}
             className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
@@ -134,9 +152,6 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
           <p>v1.12</p>
         </div>
       </aside>
-
-      {/* Main Content */}
-      
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Patient {
   id: number;
@@ -13,7 +13,6 @@ interface Patient {
 }
 
 export default function ViewPatients() {
-  // Sample patient data
   const [patients, setPatients] = useState<Patient[]>([
     { id: 1, firstName: "John", lastName: "Doe", gender: "Male", dob: "1990-05-10", phone: "0712345678", email: "john@example.com", bloodGroup: "O+" },
     { id: 2, firstName: "Jane", lastName: "Smith", gender: "Female", dob: "1995-08-20", phone: "0723456789", email: "jane@example.com", bloodGroup: "A-" },
@@ -37,8 +36,7 @@ export default function ViewPatients() {
 
   // Handle "Delete" button click
   const handleDelete = (id: number) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this patient?");
-    if (confirmDelete) {
+    if (window.confirm("Are you sure you want to delete this patient?")) {
       setPatients((prevPatients) => prevPatients.filter((p) => p.id !== id));
     }
   };
@@ -57,6 +55,13 @@ export default function ViewPatients() {
     );
     setSelectedPatient(null);
   };
+
+  // Filtered Patients based on Search Term (Case Insensitive)
+  const filteredPatients = patients.filter(
+    (patient) =>
+      patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
@@ -84,18 +89,20 @@ export default function ViewPatients() {
                 <th className="p-2 border border-gray-300 dark:border-gray-600">Gender</th>
                 <th className="p-2 border border-gray-300 dark:border-gray-600">DOB</th>
                 <th className="p-2 border border-gray-300 dark:border-gray-600">Phone</th>
+                <th className="p-2 border border-gray-300 dark:border-gray-600">Blood Group</th>
                 <th className="p-2 border border-gray-300 dark:border-gray-600">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {patients.length > 0 ? (
-                patients.map((patient, index) => (
+              {filteredPatients.length > 0 ? (
+                filteredPatients.map((patient, index) => (
                   <tr key={patient.id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
                     <td className="p-2 border border-gray-300 dark:border-gray-600">{index + 1}</td>
                     <td className="p-2 border border-gray-300 dark:border-gray-600">{patient.firstName} {patient.lastName}</td>
                     <td className="p-2 border border-gray-300 dark:border-gray-600">{patient.gender}</td>
                     <td className="p-2 border border-gray-300 dark:border-gray-600">{patient.dob}</td>
                     <td className="p-2 border border-gray-300 dark:border-gray-600">{patient.phone}</td>
+                    <td className="p-2 border border-gray-300 dark:border-gray-600">{patient.bloodGroup}</td>
                     <td className="p-2 border border-gray-300 dark:border-gray-600">
                       <button onClick={() => handleView(patient)} className="text-blue-600 hover:underline mr-2">View</button>
                       <button onClick={() => handleEdit(patient)} className="text-green-600 hover:underline mr-2">Edit</button>

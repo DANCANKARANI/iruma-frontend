@@ -26,4 +26,4 @@ export default function ReceptionDashboard() {
       </div>
     );
   }
-  
+  {/*end of dashboard */}
