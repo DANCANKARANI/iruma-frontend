@@ -5,13 +5,14 @@ import { FaUserMd, FaUsers, FaCalendarAlt, FaClipboardList, FaFileInvoiceDollar,
 import Appointments from "./components/appointment";
 import { Patients } from "./components/patientManagement";
 import { Prescriptions } from "./components/prescription";
+import {Reports} from "./components/reports";
 
 
 // Components for each section (you can create actual pages for these later)
 const Dashboard = () => <div>🏥 Welcome to the Doctor's Dashboard</div>;
 const Billing = () => <div>💰 Billing and Payments</div>;
 const Messages = () => <div>💬 Messages and Chats</div>;
-const Reports = () => <div>📊 Reports & Analytics</div>;
+
 const Settings = () => <div>⚙️ Doctor Settings</div>;
 
 export default function DoctorDashboard() {
