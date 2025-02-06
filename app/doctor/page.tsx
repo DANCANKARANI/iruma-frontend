@@ -52,7 +52,6 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "Patients", icon: <FaUsers /> },
     { name: "Appointments", icon: <FaCalendarAlt /> },
     { name: "Prescriptions", icon: <FaClipboardList /> },
-    { name: "Billing", icon: <FaFileInvoiceDollar /> },
     { name: "Messages", icon: <FaComments /> },
     { name: "Reports", icon: <FaChartBar /> },
     { name: "Settings", icon: <FaCog /> },
