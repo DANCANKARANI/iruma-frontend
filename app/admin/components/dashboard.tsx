@@ -1,7 +1,6 @@
 import { useTheme } from "./themeContext";
 import {
   FaFileAlt,
-  FaUserMd,
   FaCogs,
   FaTachometerAlt,
   FaAdjust,

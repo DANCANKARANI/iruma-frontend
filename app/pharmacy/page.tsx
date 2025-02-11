@@ -6,7 +6,6 @@ import {
   FaClipboardList,
   FaShoppingCart,
   FaChartBar,
-  FaUsers,
   FaComments,
   FaCog,
   FaSignOutAlt,

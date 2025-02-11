@@ -15,7 +15,7 @@ export default function ReceptionDashboard() {
   
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-xl font-semibold text-gray-700">View Appointments</h2>
-            <p className="text-sm text-gray-600 mt-2">Check and manage today's appointments.</p>
+            <p className="text-sm text-gray-600 mt-2">Check and manage today&apos;s appointments.</p>
           </div>
   
           <div className="bg-white shadow rounded-lg p-6">
