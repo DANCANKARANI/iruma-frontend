@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaUserMd, FaUsers, FaCalendarAlt, FaClipboardList, FaFileInvoiceDollar, FaComments, FaChartBar, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaUserMd, FaUsers, FaCalendarAlt, FaClipboardList, FaComments, FaChartBar, FaCog, FaSignOutAlt } from "react-icons/fa";
 import Appointments from "./components/appointment";
 import { Patients } from "./components/patientManagement";
 import { Prescriptions } from "./components/prescription";

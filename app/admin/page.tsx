@@ -7,7 +7,6 @@ import Sidebar from "./components/sidebar";
 import Mode from "./components/mode";
 import AddPharmacist from "./components/pharmacist/pharmacist";
 import ViewPharmacist from "./components/pharmacist/ViewPharmacist";
-import EditPharmacist from "./components/pharmacist/EditPharmacist";
 import AddDoctor from "./components/doctor/addDoctor";
 import ViewDoctors from "./components/doctor/viewDoctor";
 import Reports from "./components/reports";
