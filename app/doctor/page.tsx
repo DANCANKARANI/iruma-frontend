@@ -1,22 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserMd, FaUsers, FaCalendarAlt, FaClipboardList, FaComments, FaChartBar, FaCog, FaSignOutAlt } from "react-icons/fa";
 import Appointments from "./components/appointment";
 import { Patients } from "./components/patientManagement";
 import { Prescriptions } from "./components/prescription";
-import {Reports} from "./components/reports";
+import { Reports } from "./components/reports";
+import Navbar from "../admin/components/navbar";
+import Cookies from "js-cookie";
 
-
-// Components for each section (you can create actual pages for these later)
+// Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Doctor's Dashboard</div>;
 const Billing = () => <div>💰 Billing and Payments</div>;
 const Messages = () => <div>💬 Messages and Chats</div>;
-
 const Settings = () => <div>⚙️ Doctor Settings</div>;
 
 export default function DoctorDashboard() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
+  const [doctorName, setDoctorName] = useState("");
+
+  // Fetch doctor name from token stored in cookies
+  useEffect(() => {
+    const token = Cookies.get("token"); // Retrieve token from cookies
+    if (token) {
+      try {
+        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode JWT
+        setDoctorName(decodedToken.name || "Doctor"); // Extract name from the token
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen">
@@ -24,15 +38,21 @@ export default function DoctorDashboard() {
       <Sidebar selectedPage={selectedPage} setSelectedPage={setSelectedPage} />
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-100">
-        {selectedPage === "Dashboard" && <Dashboard />}
-        {selectedPage === "Patients" && <Patients />}
-        {selectedPage === "Appointments" && <Appointments />}
-        {selectedPage === "Prescriptions" && <Prescriptions />}
-        {selectedPage === "Billing" && <Billing />}
-        {selectedPage === "Messages" && <Messages />}
-        {selectedPage === "Reports" && <Reports />}
-        {selectedPage === "Settings" && <Settings />}
+      <div className="flex-1 bg-gray-100">
+        {/* Navbar */}
+        <Navbar name={doctorName} />
+
+        {/* Page Content */}
+        <div className="p-6">
+          {selectedPage === "Dashboard" && <Dashboard />}
+          {selectedPage === "Patients" && <Patients />}
+          {selectedPage === "Appointments" && <Appointments />}
+          {selectedPage === "Prescriptions" && <Prescriptions />}
+          {selectedPage === "Billing" && <Billing />}
+          {selectedPage === "Messages" && <Messages />}
+          {selectedPage === "Reports" && <Reports />}
+          {selectedPage === "Settings" && <Settings />}
+        </div>
       </div>
     </div>
   );

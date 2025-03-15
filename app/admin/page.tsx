@@ -56,7 +56,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="flex-1">
         {/* Top Navigation */}
-        <Navbar />
+        <Navbar name={""} />
         {/* Dynamic Content */}
         {renderContent()}
       </main>

@@ -3,16 +3,16 @@ import { useState } from "react";
 
 export default function RegisterPatient() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     gender: "",
     dob: "",
-    phone: "",
+    phone_number: "",
     email: "",
     address: "",
-    emergencyContact: "",
-    bloodGroup: "",
-    medicalHistory: "",
+    emergency_contact: "",
+    blood_group: "",
+    medical_history: "",
   });
 
   // Handle form input change
@@ -21,12 +21,42 @@ export default function RegisterPatient() {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Patient Registered:", formData);
-    alert("Patient registered successfully!");
+  
+    // Convert DOB to RFC 3339 format
+    const formattedDOB = new Date(formData.dob).toISOString(); // Converts to "2025-02-10T00:00:00.000Z"
+  
+    const payload = { ...formData, dob: formattedDOB };
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/V1/patient", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to register patient: ${await response.text()}`);
+      }
+  
+      const result = await response.json();
+      console.log("Server Response:", result);
+      alert("Patient registered successfully!");
+    } catch (error) {
+      console.error("Error:", error);
+    
+      if (error instanceof Error) {
+        alert(`Error: ${error.message}`);
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }  
   };
-
+  
+  
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
       <div className="w-full max-w-6xl bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
@@ -41,8 +71,8 @@ export default function RegisterPatient() {
               <label className="block text-gray-700 dark:text-gray-300">First Name</label>
               <input
                 type="text"
-                name="firstName"
-                value={formData.firstName}
+                name="first_name"
+                value={formData.first_name}
                 onChange={handleChange}
                 required
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
@@ -53,8 +83,8 @@ export default function RegisterPatient() {
               <label className="block text-gray-700 dark:text-gray-300">Last Name</label>
               <input
                 type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="last_name"
+                value={formData.last_name}
                 onChange={handleChange}
                 required
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
@@ -96,8 +126,8 @@ export default function RegisterPatient() {
               <label className="block text-gray-700 dark:text-gray-300">Phone Number</label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="phone_number"
+                value={formData.phone_number}
                 onChange={handleChange}
                 required
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
@@ -119,8 +149,8 @@ export default function RegisterPatient() {
             <div>
               <label className="block text-gray-700 dark:text-gray-300">Blood Group</label>
               <select
-                name="bloodGroup"
-                value={formData.bloodGroup}
+                name="blood_group"
+                value={formData.blood_group}
                 onChange={handleChange}
                 required
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
@@ -141,8 +171,8 @@ export default function RegisterPatient() {
               <label className="block text-gray-700 dark:text-gray-300">Emergency Contact</label>
               <input
                 type="tel"
-                name="emergencyContact"
-                value={formData.emergencyContact}
+                name="emergency_contact"
+                value={formData.emergency_contact}
                 onChange={handleChange}
                 required
                 className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
@@ -167,8 +197,8 @@ export default function RegisterPatient() {
             <div>
               <label className="block text-gray-700 dark:text-gray-300">Medical History</label>
               <textarea
-                name="medicalHistory"
-                value={formData.medicalHistory}
+                name="medical_history"
+                value={formData.medical_history}
                 onChange={handleChange}
                 rows={3}
                 required

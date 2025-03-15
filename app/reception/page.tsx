@@ -64,7 +64,7 @@ n
       <main className="flex-1">
         {/* Top Navigation */}
         {/* Top Navigation */}
-              <Navbar />
+              <Navbar name={""} />
               {/* Dynamic Content */}
               {renderContent()}
        
