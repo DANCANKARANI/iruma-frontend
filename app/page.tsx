@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {jwtDecode} from "jwt-decode"; // Import the jwt-decode library
+import { jwtDecode } from "jwt-decode"; // Import the jwt-decode library
 
 // Define a custom JWT payload type
 interface CustomJwtPayload {
@@ -32,6 +32,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
+        credentials: "include", // Include cookies in the request
       });
 
       // Parse the response
@@ -41,14 +42,14 @@ export default function Home() {
         // Extract the token from the response
         const token = data.data.token;
 
+        // Store the token in a cookie
+        document.cookie = `Authorization=${token}; path=/; Secure; SameSite=Strict`;
+
         // Decode the token using the custom type
         const decodedToken = jwtDecode<CustomJwtPayload>(token);
         const userRole = decodedToken.role; // Access the 'role' field
         const fullName = decodedToken.full_name;
-        console.log(fullName)
-
-        // Store the token in localStorage for future authenticated requests
-        localStorage.setItem("token", token);
+        console.log(fullName);
 
         // Redirect the user based on their role
         if (userRole === "doctor") {
