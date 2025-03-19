@@ -8,9 +8,9 @@ import Navbar from "../admin/components/navbar";
 import BookAppointment from "./component/bookAppointment";
 import ViewAppointments from "./component/viewAppointments";
 import RegisterPatient from "./component/registerPatient";
-import ViewPatients from "./component/viewPatients";
 import Setting from "./component/setting";
 import Billing from "./component/billing";
+import {ViewPatients} from "./component/viewPatients";
 
 
 

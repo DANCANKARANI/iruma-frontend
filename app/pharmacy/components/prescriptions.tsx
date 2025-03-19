@@ -19,11 +19,16 @@ interface Prescription {
     id: string;
     first_name: string;
     last_name: string;
+    phone_number: string;
+    email: string;
+    address: string;
   };
   doctor_id: string;
   doctor: {
     id: string;
     full_name: string;
+    phone_number: string;
+    email: string;
   };
   diagnosis: string;
   dosage: string;
@@ -42,8 +47,23 @@ export default function Prescriptions() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Function to get the JWT token from cookies
+  const getJwtToken = () => {
+    const cookies = document.cookie.split("; ");
+    const tokenCookie = cookies.find((cookie) => cookie.startsWith("Authorization="));
+    const token = tokenCookie ? tokenCookie.split("=")[1] : null;
+    return token;
+  };
+
   // Fetch prescriptions from the backend with filters
   const fetchPrescriptions = async (filters: { status?: string; patientName?: string }) => {
+    const jwtToken = getJwtToken();
+    if (!jwtToken) {
+      setError("You are not authorized. Please log in.");
+      setLoading(false);
+      return;
+    }
+
     try {
       // Construct query parameters
       const queryParams = new URLSearchParams();
@@ -55,7 +75,12 @@ export default function Prescriptions() {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription?${queryParams.toString()}`
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription?${queryParams.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
       );
       if (!response.ok) {
         throw new Error("Failed to fetch prescriptions");
@@ -84,11 +109,18 @@ export default function Prescriptions() {
 
   // Handle Prescription Fulfillment
   const fulfillPrescription = async (id: string) => {
+    const jwtToken = getJwtToken();
+    if (!jwtToken) {
+      setError("You are not authorized. Please log in.");
+      return;
+    }
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({ status: "Fulfilled" }),
       });
@@ -182,12 +214,20 @@ export default function Prescriptions() {
               🧑‍⚕️ Patient: {prescription.patient.first_name} {prescription.patient.last_name}
             </h3>
             <p className="text-gray-600">Diagnosis: {prescription.diagnosis}</p>
+            <p className="text-gray-600">Doctor: {prescription.doctor.full_name}</p>
+            <p className="text-gray-600">Doctor's Contact: {prescription.doctor.phone_number}</p>
+            <p className="text-gray-600">Patient's Contact: {prescription.patient.phone_number}</p>
+            <p className="text-gray-600">Patient's Address: {prescription.patient.address}</p>
+            <p className="text-gray-600">Prescription Date: {new Date(prescription.created_at).toLocaleDateString()}</p>
 
             <table className="w-full border-collapse border border-gray-300 mt-4">
               <thead>
                 <tr className="bg-gray-200">
                   <th className="border p-2">Medicine</th>
                   <th className="border p-2">Form</th>
+                  <th className="border p-2">Dosage</th>
+                  <th className="border p-2">Frequency</th>
+                  <th className="border p-2">Instructions</th>
                   <th className="border p-2">Stock</th>
                 </tr>
               </thead>
@@ -196,6 +236,9 @@ export default function Prescriptions() {
                   <tr key={medicine.id} className="text-center">
                     <td className="border p-2">{medicine.name}</td>
                     <td className="border p-2">{medicine.form}</td>
+                    <td className="border p-2">{prescription.dosage}</td>
+                    <td className="border p-2">{prescription.frequency}</td>
+                    <td className="border p-2">{prescription.instructions}</td>
                     <td className={`border p-2 font-bold ${medicine.in_stock ? "text-green-600" : "text-red-600"}`}>
                       {medicine.in_stock ? "✅ Available" : "❌ Out of Stock"}
                     </td>

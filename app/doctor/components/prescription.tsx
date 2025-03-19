@@ -42,6 +42,7 @@ export const Prescriptions = () => {
   ]);
   const [diagnosis, setDiagnosis] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   // Function to get the JWT token from cookies
   const getJwtToken = () => {
@@ -159,10 +160,42 @@ export const Prescriptions = () => {
     setPrescriptionDetails(prescriptionDetails.filter((_, i) => i !== index));
   };
 
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+
+    // Validate patient
+    if (!selectedPatient) {
+      errors.patient = "Please select a patient.";
+    }
+
+    // Validate diagnosis
+    if (!diagnosis.trim()) {
+      errors.diagnosis = "Please enter a diagnosis.";
+    }
+
+    // Validate prescription details
+    prescriptionDetails.forEach((detail, index) => {
+      if (!detail.medicine_id) {
+        errors[`medicine_${index}`] = "Please select a medicine.";
+      }
+      if (!detail.dosage.trim()) {
+        errors[`dosage_${index}`] = "Please enter a dosage.";
+      }
+      if (!detail.frequency.trim()) {
+        errors[`frequency_${index}`] = "Please enter a frequency.";
+      }
+      if (!detail.instructions.trim()) {
+        errors[`instructions_${index}`] = "Please enter instructions.";
+      }
+    });
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0; // Return true if no errors
+  };
+
   const handleSubmit = async () => {
-    // Validate required fields
-    if (!selectedPatient || !doctor || prescriptionDetails.some((detail) => !detail.medicine_id || !detail.dosage)) {
-      alert("Please complete all prescription details.");
+    // Validate the form
+    if (!validateForm()) {
       return;
     }
 
@@ -181,8 +214,8 @@ export const Prescriptions = () => {
 
     // Construct the prescription data in the required format
     const prescriptionData = {
-      patient_id: selectedPatient.id, // Ensure patient_id is included
-      doctor_id: doctor.id, // Ensure doctor_id is included
+      patient_id: selectedPatient!.id, // Ensure patient_id is included
+      doctor_id: doctor!.id, // Ensure doctor_id is included
       diagnosis,
       dosage: prescriptionDetails[0].dosage, // Assuming only one prescription detail for simplicity
       instructions: prescriptionDetails[0].instructions, // Assuming only one prescription detail for simplicity
@@ -217,6 +250,7 @@ export const Prescriptions = () => {
           setSelectedPatient(null);
           setPrescriptionDetails([{ medicine_id: null, dosage: "", frequency: "", instructions: "" }]);
           setDiagnosis("");
+          setValidationErrors({});
         } else {
           setStatus("error");
           console.error("Prescription error data:", data); // Debugging
@@ -255,6 +289,9 @@ export const Prescriptions = () => {
             </option>
           ))}
         </select>
+        {validationErrors.patient && (
+          <p className="text-red-600 text-sm mt-1">{validationErrors.patient}</p>
+        )}
       </div>
 
       {/* Diagnosis */}
@@ -266,6 +303,9 @@ export const Prescriptions = () => {
           onChange={(e) => setDiagnosis(e.target.value)}
           className="w-full p-2 border rounded"
         />
+        {validationErrors.diagnosis && (
+          <p className="text-red-600 text-sm mt-1">{validationErrors.diagnosis}</p>
+        )}
       </div>
 
       {/* Prescription Details */}
@@ -288,6 +328,9 @@ export const Prescriptions = () => {
                     </option>
                   ))}
                 </select>
+                {validationErrors[`medicine_${index}`] && (
+                  <p className="text-red-600 text-sm mt-1">{validationErrors[`medicine_${index}`]}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-semibold">Dosage:</label>
@@ -297,6 +340,9 @@ export const Prescriptions = () => {
                   onChange={(e) => handlePrescriptionChange(index, "dosage", e.target.value)}
                   className="w-full p-2 border rounded"
                 />
+                {validationErrors[`dosage_${index}`] && (
+                  <p className="text-red-600 text-sm mt-1">{validationErrors[`dosage_${index}`]}</p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -308,6 +354,9 @@ export const Prescriptions = () => {
                   onChange={(e) => handlePrescriptionChange(index, "frequency", e.target.value)}
                   className="w-full p-2 border rounded"
                 />
+                {validationErrors[`frequency_${index}`] && (
+                  <p className="text-red-600 text-sm mt-1">{validationErrors[`frequency_${index}`]}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-semibold">Instructions:</label>
@@ -317,6 +366,9 @@ export const Prescriptions = () => {
                   onChange={(e) => handlePrescriptionChange(index, "instructions", e.target.value)}
                   className="w-full p-2 border rounded"
                 />
+                {validationErrors[`instructions_${index}`] && (
+                  <p className="text-red-600 text-sm mt-1">{validationErrors[`instructions_${index}`]}</p>
+                )}
               </div>
             </div>
             <button

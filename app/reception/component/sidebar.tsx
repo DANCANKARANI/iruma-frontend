@@ -84,40 +84,7 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
           </div>
 
           {/* Appointment Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setAppointmentMenuOpen(!isAppointmentMenuOpen)}
-              className="flex items-center justify-between w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
-            >
-              <div className="flex items-center">
-                <FaFileAlt className="mr-4" />
-                {isSidebarOpen && <span>Appointments</span>}
-              </div>
-              {isSidebarOpen && (
-                <FaChevronDown
-                  className={`transition-transform ${isAppointmentMenuOpen ? "rotate-180" : "rotate-0"}`}
-                />
-              )}
-            </button>
-            {isAppointmentMenuOpen && (
-              <div className="pl-8 mt-1 space-y-1">
-                <button
-                  onClick={() => onSelect("view-appointments")}
-                  className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
-                >
-                  <FaEye className="mr-3" />
-                  {isSidebarOpen && <span>View Appointments</span>}
-                </button>
-                <button
-                  onClick={() => onSelect("book-appointment")}
-                  className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
-                >
-                  <FaPlus className="mr-3" />
-                  {isSidebarOpen && <span>Book Appointment</span>}
-                </button>
-              </div>
-            )}
-          </div>
+         
 
           {/* Billing Button */}
           <button

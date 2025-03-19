@@ -60,6 +60,8 @@ export default function Home() {
           router.push("/reception");
         } else if (userRole === "pharmacist") {
           router.push("/pharmacy");
+        }else if (userRole === "technician") {
+            router.push("/technician");
         } else {
           // Default fallback for unknown roles
           router.push("/dashboard");
@@ -79,7 +81,7 @@ export default function Home() {
       {/* Left Section */}
       <div className="flex flex-col justify-center items-center w-1/2 bg-gray-200 p-8">
         <h1 className="text-2xl font-bold text-gray-700 mb-6">
-          EDISPENDARY MANAGEMENT SYSTEM
+          DISPENSARY MANAGEMENT SYSTEM
         </h1>
         <form onSubmit={handleSubmit} className="w-full max-w-sm">
           <label className="block text-red-600 font-semibold mb-2">Username</label>

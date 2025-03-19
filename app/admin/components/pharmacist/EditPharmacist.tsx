@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
 interface Pharmacist {
-  id: number;
-  name:string;
+  id: string;
+  full_name: string;
   email: string;
-  phone: string;
+  phone_number: string;
   address: string;
-  qualifications: string;
-  licenseNumber: string;
-  password: string;
-  confirmPassword: string;
+  role: string;
+  licenseNumber?: string;
+  password?: string;
+  confirmPassword?: string;
 }
 
 interface EditPharmacistProps {
@@ -19,14 +19,14 @@ interface EditPharmacistProps {
 
 const EditPharmacist: React.FC<EditPharmacistProps> = ({ pharmacist, onBack }) => {
   const [formData, setFormData] = useState({
-    name:pharmacist.name,
+    full_name: pharmacist.full_name,
     email: pharmacist.email,
-    phone: pharmacist.phone,
+    phone_number: pharmacist.phone_number,
     address: pharmacist.address,
-    qualifications: pharmacist.qualifications,
-    licenseNumber: pharmacist.licenseNumber,
-    password: pharmacist.password,
-    confirmPassword: pharmacist.confirmPassword,
+    role: pharmacist.role,
+    licenseNumber: pharmacist.licenseNumber || "",
+    password: pharmacist.password || "",
+    confirmPassword: pharmacist.confirmPassword || "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -47,8 +47,8 @@ const EditPharmacist: React.FC<EditPharmacistProps> = ({ pharmacist, onBack }) =
           <label className="block text-gray-700">Name</label>
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="full_name"
+            value={formData.full_name}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg"
           />
@@ -67,8 +67,8 @@ const EditPharmacist: React.FC<EditPharmacistProps> = ({ pharmacist, onBack }) =
           <label className="block text-gray-700">Phone</label>
           <input
             type="tel"
-            name="phone"
-            value={formData.phone}
+            name="phone_number"
+            value={formData.phone_number}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg"
           />
@@ -83,11 +83,11 @@ const EditPharmacist: React.FC<EditPharmacistProps> = ({ pharmacist, onBack }) =
           />
         </div>
         <div>
-          <label className="block text-gray-700">Qualifications</label>
+          <label className="block text-gray-700">Role</label>
           <input
             type="text"
-            name="qualifications"
-            value={formData.qualifications}
+            name="role"
+            value={formData.role}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg"
           />

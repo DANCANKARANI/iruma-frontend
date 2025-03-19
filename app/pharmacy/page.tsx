@@ -15,11 +15,12 @@ import Inventory from "./components/inventory";
 import Orders from "./components/orders";
 import Prescriptions from "./components/prescriptions";
 import Reports from "./components/reports";
+import Messages from "./components/chat";
 
 
 // Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Pharmacy Dashboard</div>;
-const Messages = () => <div>💬 Messages and Chats</div>;
+
 const Settings = () => <div>⚙️ Pharmacy Settings</div>;
 
 export default function PharmacyDashboard() {

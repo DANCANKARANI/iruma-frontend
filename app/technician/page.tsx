@@ -1,43 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  FaUserMd,
-  FaUsers,
-  FaClipboardList,
-  FaComments,
-  FaChartBar,
-  FaCog,
-  FaSignOutAlt,
-  FaFlask, // Request Lab Test Icon
-  FaFileMedical // View Uploaded Lab Tests Icon
-} from "react-icons/fa";
-import { Patients } from "./components/patientManagement";
-import { Prescriptions } from "./components/prescription";
-import { Reports } from "./components/reports";
+import { FaUsers, FaUpload, FaClipboardList, FaSignOutAlt } from "react-icons/fa";
+
 import Navbar from "../admin/components/navbar";
 import Cookies from "js-cookie";
-import Messages from "./components/chat";
-import RequestLabTest from "./components/requestTest";
+import { Patients } from "../doctor/components/patientManagement";
+import LabTestRequests from "./components/labTest";
+import UploadLabTests from "./components/uploadLabTest";
 
 // Components for each section
-const Dashboard = () => <div>🏥 Welcome to the Clinical Officer's Dashboard</div>;
-const Billing = () => <div>💰 Billing and Payments</div>;
-const Settings = () => <div>⚙️ CO's Settings</div>;
+const Dashboard = () => <div>🔬 Welcome to the Lab Technician's Dashboard</div>;
 
-const ViewLabTests = () => <div>📄 View Uploaded Lab Tests</div>;
-
-export default function DoctorDashboard() {
+export default function LabTechnician() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
-  const [doctorName, setDoctorName] = useState("");
+  const [labTechName, setLabTechName] = useState("");
 
-  // Fetch doctor name from token stored in cookies
+  // Fetch lab technician name from token stored in cookies
   useEffect(() => {
-    const token = Cookies.get("Authorization"); // Retrieve token from cookies
+    const token = Cookies.get("token"); // Retrieve token from cookies
     if (token) {
       try {
         const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode JWT
-        setDoctorName(decodedToken.name || "Doctor"); // Extract name from the token
+        setLabTechName(decodedToken.name || "Lab Technician"); // Extract name from the token
       } catch (error) {
         console.error("Invalid token:", error);
       }
@@ -52,19 +37,14 @@ export default function DoctorDashboard() {
       {/* Main Content */}
       <div className="flex-1 bg-gray-100">
         {/* Navbar */}
-        <Navbar name={doctorName} />
+        <Navbar name={labTechName} />
 
         {/* Page Content */}
         <div className="p-6">
           {selectedPage === "Dashboard" && <Dashboard />}
           {selectedPage === "Patients" && <Patients />}
-          {selectedPage === "Request Lab Test" && <RequestLabTest />}
-          {selectedPage === "View Lab Tests" && <ViewLabTests />}
-          {selectedPage === "Prescriptions" && <Prescriptions />}
-          {selectedPage === "Billing" && <Billing />}
-          {selectedPage === "Messages" && <Messages />}
-          {selectedPage === "Reports" && <Reports />}
-          {selectedPage === "Settings" && <Settings />}
+          {selectedPage === "LabTestRequests" && <LabTestRequests />}
+          {selectedPage === "UploadLabTests" && <UploadLabTests />}
         </div>
       </div>
     </div>
@@ -81,21 +61,17 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [
-    { name: "Dashboard", icon: <FaUserMd /> },
+    { name: "Dashboard", icon: <FaUsers /> },
     { name: "Patients", icon: <FaUsers /> },
-    { name: "Request Lab Test", icon: <FaFlask /> },
-    { name: "View Lab Tests", icon: <FaFileMedical /> },
-    { name: "Prescriptions", icon: <FaClipboardList /> },
-    { name: "Messages", icon: <FaComments /> },
-    { name: "Reports", icon: <FaChartBar /> },
-    { name: "Settings", icon: <FaCog /> },
+    { name: "LabTestRequests", icon: <FaClipboardList /> },
+    { name: "UploadLabTests", icon: <FaUpload /> },
   ];
 
   return (
-    <div className={`h-screen ${isOpen ? "w-64" : "w-20"} bg-customBg text-white flex flex-col h-screen transition-all duration-300 sticky top-0 z-50 overflow-y-auto`}>
+    <div className={`h-screen ${isOpen ? "w-64" : "w-20"} bg-blue-900 text-white flex flex-col transition-all duration-300 sticky top-0 z-50 overflow-y-auto`}>
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-blue-700">
-        <h2 className={`${isOpen ? "block" : "hidden"} text-xl font-bold`}>Clinical Officer Panel</h2>
+        <h2 className={`${isOpen ? "block" : "hidden"} text-xl font-bold`}>Lab Technician Panel</h2>
         <button onClick={() => setIsOpen(!isOpen)} className="text-white focus:outline-none">
           {isOpen ? "✖" : "☰"}
         </button>

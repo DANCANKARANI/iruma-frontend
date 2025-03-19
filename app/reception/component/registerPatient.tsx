@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { getCookie } from "cookies-next"; // Import cookies-next to access cookies
 
 export default function RegisterPatient() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ export default function RegisterPatient() {
     medical_history: "",
   });
 
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // State for success message
+
   // Handle form input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,46 +26,88 @@ export default function RegisterPatient() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Convert DOB to RFC 3339 format
     const formattedDOB = new Date(formData.dob).toISOString(); // Converts to "2025-02-10T00:00:00.000Z"
-  
+
     const payload = { ...formData, dob: formattedDOB };
-  
+
     try {
-      const response = await fetch("http://localhost:8000/api/V1/patient", {
+      // Load the API endpoint from .env
+      const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
+
+      if (!apiEndpoint) {
+        throw new Error("API endpoint is not defined in .env file.");
+      }
+
+      // Retrieve the JWT token from cookies
+      const jwtToken = getCookie("Authorization"); // Replace "jwt" with the name of your cookie
+
+      if (!jwtToken) {
+        throw new Error("JWT token not found in cookies.");
+      }
+
+      const response = await fetch(`${apiEndpoint}/reception`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`, // Include the JWT token in the Authorization header
         },
         body: JSON.stringify(payload),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Failed to register patient: ${await response.text()}`);
       }
-  
+
       const result = await response.json();
       console.log("Server Response:", result);
-      alert("Patient registered successfully!");
+
+      // Clear the form
+      setFormData({
+        first_name: "",
+        last_name: "",
+        gender: "",
+        dob: "",
+        phone_number: "",
+        email: "",
+        address: "",
+        emergency_contact: "",
+        blood_group: "",
+        medical_history: "",
+      });
+
+      // Set success message
+      setSuccessMessage("Patient registered successfully!");
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
     } catch (error) {
       console.error("Error:", error);
-    
+
       if (error instanceof Error) {
         alert(`Error: ${error.message}`);
       } else {
         alert("An unexpected error occurred.");
       }
-    }  
+    }
   };
-  
-  
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
       <div className="w-full max-w-6xl bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-semibold text-gray-800 dark:text-white text-center mb-6">
-          Register Patient 
+          Register Patient
         </h2>
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+            {successMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column - Personal Details */}
