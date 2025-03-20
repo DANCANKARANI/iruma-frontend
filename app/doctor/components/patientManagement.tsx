@@ -81,7 +81,7 @@ export const Patients = () => {
   const handleAddPatient = async (newPatient: Patient) => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/patient`, {
+      const response = await fetch(`${API_URL}/reception`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPatient),

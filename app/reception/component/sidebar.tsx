@@ -12,12 +12,12 @@ import {
   FaPlus,
   FaEye,
   FaFileInvoiceDollar, // Billing Icon
+  FaExchangeAlt, // Refer Patient Icon
 } from "react-icons/fa";
 
 export default function Sidebar({ onSelect }: { onSelect: (view: string) => void }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isPatientMenuOpen, setPatientMenuOpen] = useState(false);
-  const [isAppointmentMenuOpen, setAppointmentMenuOpen] = useState(false);
 
   return (
     <div className="flex h-screen">
@@ -79,12 +79,17 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
                   <FaPlus className="mr-3" />
                   {isSidebarOpen && <span>Register Patient</span>}
                 </button>
+                {/* Refer Patient Button */}
+                <button
+                  onClick={() => onSelect("refer-patient")}
+                  className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+                >
+                  <FaExchangeAlt className="mr-3" />
+                  {isSidebarOpen && <span>Refer Patient</span>}
+                </button>
               </div>
             )}
           </div>
-
-          {/* Appointment Dropdown */}
-         
 
           {/* Billing Button */}
           <button

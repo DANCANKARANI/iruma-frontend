@@ -11,6 +11,7 @@ import RegisterPatient from "./component/registerPatient";
 import Setting from "./component/setting";
 import Billing from "./component/billing";
 import {ViewPatients} from "./component/viewPatients";
+import ReferPatient from "./component/referPatient";
 
 
 
@@ -35,6 +36,9 @@ export default function receptionDashboard() {
 
       case "view-patients":
         return <ViewPatients />
+
+      case "refer-patient":
+        return <ReferPatient />
       
       case "settings":
         return <Setting/>

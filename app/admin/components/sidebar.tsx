@@ -13,8 +13,10 @@ import {
 
 export default function Sidebar({ onSelect }: { onSelect: (view: string) => void }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [isDoctorMenuOpen, setDoctorMenuOpen] = useState(false); // Track Doctor dropdown menu state
+  const [isClinicalOfficerMenuOpen, setClinicalOfficerMenuOpen] = useState(false); // Track Clinical Officer dropdown menu state
   const [isPharmacistMenuOpen, setPharmacistMenuOpen] = useState(false); // Track Pharmacist dropdown menu state
+  const [isReceptionMenuOpen, setReceptionMenuOpen] = useState(false); // Track Reception dropdown menu state
+  const [isLabTechnicianMenuOpen, setLabTechnicianMenuOpen] = useState(false); // Track Lab Technician dropdown menu state
 
   return (
     <aside
@@ -82,40 +84,118 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
           )}
         </div>
 
-        {/* Doctor Dropdown */}
+        {/* Clinical Officer Dropdown */}
         <div className="relative">
           <button
-            onClick={() => setDoctorMenuOpen(!isDoctorMenuOpen)}
+            onClick={() => setClinicalOfficerMenuOpen(!isClinicalOfficerMenuOpen)}
             className="flex items-center justify-between w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
           >
             <div className="flex items-center">
               <FaUserMd className="mr-4" />
-              {isSidebarOpen && <span>Doctor</span>}
+              {isSidebarOpen && <span>Clinical Officer</span>}
             </div>
             {isSidebarOpen && (
               <FaChevronDown
                 className={`transition-transform ${
-                  isDoctorMenuOpen ? "rotate-180" : "rotate-0"
+                  isClinicalOfficerMenuOpen ? "rotate-180" : "rotate-0"
                 }`}
               />
             )}
           </button>
           {/* Dropdown Menu */}
-          {isDoctorMenuOpen && (
+          {isClinicalOfficerMenuOpen && (
             <div className="pl-8 mt-1 space-y-1">
               <button
-                onClick={() => onSelect("view-doctor")}
+                onClick={() => onSelect("view-clinical-officer")}
                 className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
               >
                 <FaEye className="mr-3" />
-                {isSidebarOpen && <span>View Doctor</span>}
+                {isSidebarOpen && <span>View Clinical Officer</span>}
               </button>
               <button
-                onClick={() => onSelect("add-doctor")}
+                onClick={() => onSelect("add-clinical-officer")}
                 className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
               >
                 <FaPlus className="mr-3" />
-                {isSidebarOpen && <span>Add Doctor</span>}
+                {isSidebarOpen && <span>Add Clinical Officer</span>}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Reception Dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setReceptionMenuOpen(!isReceptionMenuOpen)}
+            className="flex items-center justify-between w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+          >
+            <div className="flex items-center">
+              <FaUserMd className="mr-4" />
+              {isSidebarOpen && <span>Reception</span>}
+            </div>
+            {isSidebarOpen && (
+              <FaChevronDown
+                className={`transition-transform ${
+                  isReceptionMenuOpen ? "rotate-180" : "rotate-0"
+                }`}
+              />
+            )}
+          </button>
+          {/* Dropdown Menu */}
+          {isReceptionMenuOpen && (
+            <div className="pl-8 mt-1 space-y-1">
+              <button
+                onClick={() => onSelect("view-reception")}
+                className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+              >
+                <FaEye className="mr-3" />
+                {isSidebarOpen && <span>View Reception</span>}
+              </button>
+              <button
+                onClick={() => onSelect("add-reception")}
+                className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+              >
+                <FaPlus className="mr-3" />
+                {isSidebarOpen && <span>Add Reception</span>}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Lab Technician Dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setLabTechnicianMenuOpen(!isLabTechnicianMenuOpen)}
+            className="flex items-center justify-between w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+          >
+            <div className="flex items-center">
+              <FaUserMd className="mr-4" />
+              {isSidebarOpen && <span>Lab Technician</span>}
+            </div>
+            {isSidebarOpen && (
+              <FaChevronDown
+                className={`transition-transform ${
+                  isLabTechnicianMenuOpen ? "rotate-180" : "rotate-0"
+                }`}
+              />
+            )}
+          </button>
+          {/* Dropdown Menu */}
+          {isLabTechnicianMenuOpen && (
+            <div className="pl-8 mt-1 space-y-1">
+              <button
+                onClick={() => onSelect("view-technician")}
+                className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+              >
+                <FaEye className="mr-3" />
+                {isSidebarOpen && <span>View Lab Technician</span>}
+              </button>
+              <button
+                onClick={() => onSelect("add-technician")}
+                className="flex items-center w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+              >
+                <FaPlus className="mr-3" />
+                {isSidebarOpen && <span>Add Lab Technician</span>}
               </button>
             </div>
           )}

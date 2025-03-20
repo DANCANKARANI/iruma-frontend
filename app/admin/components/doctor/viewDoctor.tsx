@@ -2,15 +2,21 @@
 import { useEffect, useState } from "react";
 import DoctorDetailsEdit from "./DoctorDetailsEdit";
 import DeleteConfirmation from "./DeleteConfirmation";
+import Cookies from "js-cookie";
 
 interface Doctor {
   id: string;
-  name: string;
-  specialty: string;
+  full_name: string;
   email: string;
-  phone: string;
+  username: string;
+  phone_number: string;
+  role: string;
+  date_of_birth: string;
   address: string;
-  licenseNumber: string;
+  gender: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
 }
 
 export default function ViewDoctors() {
@@ -23,31 +29,56 @@ export default function ViewDoctors() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [doctorToDelete, setDoctorToDelete] = useState<Doctor | null>(null);
 
+  // Fetch JWT token from cookies
+  const token = Cookies.get("Authorization"); // Replace "jwtToken" with your cookie name
+
   useEffect(() => {
     async function fetchDoctors() {
+      if (!token) {
+        setError("No JWT token found in cookies");
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch("https://678b5db71a6b89b27a2a3042.mockapi.io/doctors");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor/all`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch doctors");
         }
         const data = await response.json();
-        setDoctors(data);
+        console.log("API Response:", data); // Log the API response
+
+        // Extract the "data" array from the response
+        if (data.data && Array.isArray(data.data)) {
+          setDoctors(data.data);
+        } else {
+          setError("Invalid data format: Expected an array of doctors");
+          setDoctors([]); // Fallback to an empty array
+        }
       } catch (err: any) {
         setError(err.message);
+        setDoctors([]); // Fallback to an empty array
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchDoctors();
-  }, []);
+  }, [token]);
 
   const filteredDoctors = searchQuery
     ? doctors.filter(
         (doctor) =>
-          doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          doctor.email.toLowerCase().includes(searchQuery.toLowerCase())
+          doctor.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doctor.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          doctor.phone_number.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : doctors;
 
@@ -62,12 +93,20 @@ export default function ViewDoctors() {
   };
 
   const handleSave = async (updatedDoctor: Doctor) => {
+    if (!token) {
+      setError("No JWT token found in cookies");
+      return;
+    }
+
     try {
       const response = await fetch(
-        `https://678b5db71a6b89b27a2a3042.mockapi.io/doctors/${updatedDoctor.id}`,
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor/${updatedDoctor.id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(updatedDoctor),
         }
       );
@@ -91,12 +130,20 @@ export default function ViewDoctors() {
   };
 
   const confirmDelete = async () => {
-    if (!doctorToDelete) return;
+    if (!doctorToDelete || !token) {
+      setError("No JWT token found in cookies");
+      return;
+    }
 
     try {
       const response = await fetch(
-        `https://678b5db71a6b89b27a2a3042.mockapi.io/doctors/${doctorToDelete.id}`,
-        { method: "DELETE" }
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor/${doctorToDelete.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (!response.ok) {
         throw new Error("Failed to delete doctor");
@@ -143,9 +190,10 @@ export default function ViewDoctors() {
             <thead>
               <tr className="bg-gray-100 sticky top-0">
                 <th className="border border-gray-300 p-2">#</th>
-                <th className="border border-gray-300 p-2">Name</th>
-                <th className="border border-gray-300 p-2">Specialty</th>
+                <th className="border border-gray-300 p-2">Full Name</th>
                 <th className="border border-gray-300 p-2">Email</th>
+                <th className="border border-gray-300 p-2">Phone Number</th>
+                <th className="border border-gray-300 p-2">Role</th>
                 <th className="border border-gray-300 p-2">Actions</th>
               </tr>
             </thead>
@@ -153,9 +201,10 @@ export default function ViewDoctors() {
               {filteredDoctors.map((doctor, index) => (
                 <tr key={doctor.id} className="hover:bg-gray-100">
                   <td className="border border-gray-300 p-2">{index + 1}</td>
-                  <td className="border border-gray-300 p-2">{doctor.name}</td>
-                  <td className="border border-gray-300 p-2">{doctor.specialty}</td>
+                  <td className="border border-gray-300 p-2">{doctor.full_name}</td>
                   <td className="border border-gray-300 p-2">{doctor.email}</td>
+                  <td className="border border-gray-300 p-2">{doctor.phone_number}</td>
+                  <td className="border border-gray-300 p-2">{doctor.role}</td>
                   <td className="border border-gray-300 p-2">
                     <button
                       className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
@@ -180,7 +229,7 @@ export default function ViewDoctors() {
               ))}
               {filteredDoctors.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="text-center p-4">
+                  <td colSpan={6} className="text-center p-4">
                     No doctors found.
                   </td>
                 </tr>
@@ -193,7 +242,7 @@ export default function ViewDoctors() {
       {/* Delete Confirmation Dialog */}
       {showDeleteConfirm && doctorToDelete && (
         <DeleteConfirmation
-          doctorName={doctorToDelete.name}
+          doctorName={doctorToDelete.full_name}
           onCancel={() => setShowDeleteConfirm(false)}
           onConfirm={confirmDelete}
         />

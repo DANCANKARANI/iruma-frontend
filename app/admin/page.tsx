@@ -11,6 +11,8 @@ import AddDoctor from "./components/doctor/addDoctor";
 import ViewDoctors from "./components/doctor/viewDoctor";
 import Reports from "./components/reports";
 import ApplicationSettings from "./components/settings";
+import ViewTechnician from "./components/technician/viewTechnician";
+import ViewReceptionist from "./components/receptionist/viewReceptionist";
 
 export default function Dashboard() {
   // State to track the active view
@@ -26,7 +28,7 @@ export default function Dashboard() {
         return <AdminDashboard />;
 
       case "add-pharmacist":
-        return <AddPharmacist />;
+        return <AddDoctor />;
 
       case "view-pharmacist":
         return <ViewPharmacist />;
@@ -40,11 +42,22 @@ export default function Dashboard() {
       case "change-mode":
         return <Mode />;
 
-      case "add-doctor":
+      case "add-clinical-officer":
         return <AddDoctor />;
       
-      case "view-doctor":
+      case "view-clinical-officer":
         return <ViewDoctors />;    
+        
+      case "view-technician":
+        return <ViewTechnician />; 
+      case "add-technician":
+          return <AddDoctor/>; 
+
+
+      case "view-reception":
+          return <ViewReceptionist />; 
+      case "add-reception":
+          return <AddDoctor/>; 
     }
   };
 

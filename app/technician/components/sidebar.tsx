@@ -23,7 +23,6 @@ export default function Sidebar() {
           <SidebarItem href="/lab/dashboard" icon={<FaUsers />} text="Dashboard" isOpen={isOpen} />
           <SidebarItem href="/lab/patients" icon={<FaUsers />} text="Patients" isOpen={isOpen} />
           <SidebarItem href="/lab/lab-test-requests" icon={<FaClipboardList />} text="Lab Test Requests" isOpen={isOpen} />
-          <SidebarItem href="/lab/upload-lab-tests" icon={<FaUpload />} text="Upload Lab Tests" isOpen={isOpen} />
         </ul>
       </nav>
 

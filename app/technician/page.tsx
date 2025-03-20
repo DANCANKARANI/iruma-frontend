@@ -7,7 +7,6 @@ import Navbar from "../admin/components/navbar";
 import Cookies from "js-cookie";
 import { Patients } from "../doctor/components/patientManagement";
 import LabTestRequests from "./components/labTest";
-import UploadLabTests from "./components/uploadLabTest";
 
 // Components for each section
 const Dashboard = () => <div>🔬 Welcome to the Lab Technician's Dashboard</div>;
@@ -44,7 +43,6 @@ export default function LabTechnician() {
           {selectedPage === "Dashboard" && <Dashboard />}
           {selectedPage === "Patients" && <Patients />}
           {selectedPage === "LabTestRequests" && <LabTestRequests />}
-          {selectedPage === "UploadLabTests" && <UploadLabTests />}
         </div>
       </div>
     </div>
@@ -64,7 +62,7 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "Dashboard", icon: <FaUsers /> },
     { name: "Patients", icon: <FaUsers /> },
     { name: "LabTestRequests", icon: <FaClipboardList /> },
-    { name: "UploadLabTests", icon: <FaUpload /> },
+   
   ];
 
   return (
