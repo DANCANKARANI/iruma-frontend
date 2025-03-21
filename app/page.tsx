@@ -56,8 +56,8 @@ export default function Home() {
           router.push("/doctor");
         } else if (userRole === "admin") {
           router.push("/admin");
-        } else if (userRole === "reception") {
-          router.push("/receptionist");
+        } else if (userRole === "receptionist") {
+          router.push("/reception");
         } else if (userRole === "pharmacist") {
           router.push("/pharmacy");
         }else if (userRole === "technician") {
