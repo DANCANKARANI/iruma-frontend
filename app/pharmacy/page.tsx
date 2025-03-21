@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   FaPills,
   FaClipboardList,
-  FaShoppingCart,
   FaChartBar,
   FaComments,
   FaSignOutAlt,
