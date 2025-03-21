@@ -17,12 +17,12 @@ export default function AddDoctor() {
 
   const token = Cookies.get("Authorization"); // Replace "jwtToken" with your cookie name
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
