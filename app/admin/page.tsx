@@ -5,11 +5,10 @@ import AdminDashboard from "./components/dashboard";
 import Navbar from "./components/navbar";
 import Sidebar from "./components/sidebar";
 import Mode from "./components/mode";
-import AddPharmacist from "./components/pharmacist/pharmacist";
 import ViewPharmacist from "./components/pharmacist/ViewPharmacist";
 import AddDoctor from "./components/doctor/addDoctor";
 import ViewDoctors from "./components/doctor/viewDoctor";
-import Reports from "./components/reports";
+
 import ApplicationSettings from "./components/settings";
 import ViewTechnician from "./components/technician/viewTechnician";
 import ViewReceptionist from "./components/receptionist/viewReceptionist";
@@ -20,7 +19,6 @@ export default function Dashboard() {
   const [activeView, setActiveView] = useState("dashboard");
 
   // State to store the ID of the selected pharmacist
-  const [selectedPharmacistId, setSelectedPharmacistId] = useState<number | null>(null);
 
   // Function to render the active content
   const renderContent = () => {

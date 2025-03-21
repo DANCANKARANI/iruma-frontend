@@ -32,6 +32,13 @@ interface PrescriptionDetail {
   instructions: string;
 }
 
+// Define the API response structure for patients
+interface ApiPatient {
+  id: string;
+  first_name: string;
+  last_name: string;
+}
+
 export const Prescriptions = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [doctor, setDoctor] = useState<Doctor | null>(null);
@@ -71,7 +78,7 @@ export const Prescriptions = () => {
         console.log("Patients response status:", response.status); // Debugging
         return response.json();
       })
-      .then((responseData: { success: boolean; data: any[] }) => {
+      .then((responseData: { success: boolean; data: ApiPatient[] }) => {
         console.log("Patients response data:", responseData); // Debugging
 
         // Extract the `data` field from the response and map to the required format

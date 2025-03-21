@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement } from "chart.js";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -11,9 +11,25 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 type ReportType = "inventory" | "prescriptions"; // Only inventory and prescriptions
 
+// Define interfaces for report data
+interface InventoryItem {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+interface PrescriptionItem {
+  patient: string;
+  medicine: string;
+  dose: string;
+  date: string;
+}
+
+type ReportDataItem = InventoryItem | PrescriptionItem;
+
 export default function PharmacyReport() {
   const [selectedReport, setSelectedReport] = useState<ReportType>("inventory");
-  const [reportData, setReportData] = useState<any[]>([]); // Store fetched data
+  const [reportData, setReportData] = useState<ReportDataItem[]>([]); // Store fetched data
   const [loading, setLoading] = useState<boolean>(false); // Loading state
 
   useEffect(() => {
@@ -42,7 +58,7 @@ export default function PharmacyReport() {
   }, [selectedReport]); // Fetch data when `selectedReport` changes
 
   const exportToPDF = () => {
-    const doc: any = new jsPDF();
+    const doc = new jsPDF();
     doc.text("Pharmacy Report", 10, 10);
 
     const headers = {
@@ -51,8 +67,14 @@ export default function PharmacyReport() {
     };
 
     const tableData = reportData.map((item) => {
-      if (selectedReport === "inventory") return [item.name, item.quantity, item.price];
-      if (selectedReport === "prescriptions") return [item.patient, item.medicine, item.dose, item.date];
+      if (selectedReport === "inventory") {
+        const inventoryItem = item as InventoryItem;
+        return [inventoryItem.name, inventoryItem.quantity, inventoryItem.price];
+      }
+      if (selectedReport === "prescriptions") {
+        const prescriptionItem = item as PrescriptionItem;
+        return [prescriptionItem.patient, prescriptionItem.medicine, prescriptionItem.dose, prescriptionItem.date];
+      }
       return [];
     });
 
@@ -87,11 +109,11 @@ export default function PharmacyReport() {
             <div style={chartStyle}>
               <Pie
                 data={{
-                  labels: reportData.map((item) => item.name),
+                  labels: reportData.map((item) => (item as InventoryItem).name),
                   datasets: [
                     {
                       label: "Medicines Stock",
-                      data: reportData.map((item) => item.quantity),
+                      data: reportData.map((item) => (item as InventoryItem).quantity),
                       backgroundColor: ["#4A90E2", "#FF6384"],
                     },
                   ],
@@ -109,7 +131,7 @@ export default function PharmacyReport() {
             <div style={chartStyle}>
               <Line
                 data={{
-                  labels: reportData.map((item) => item.patient),
+                  labels: reportData.map((item) => (item as PrescriptionItem).patient),
                   datasets: [
                     {
                       label: "Prescriptions Count",
