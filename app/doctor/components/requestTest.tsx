@@ -105,7 +105,7 @@ export default function RequestLabTest() {
       try {
         responseData = JSON.parse(responseText); // Attempt to parse JSON
       } catch (error) {
-        console.error("Failed to parse JSON response:", responseText);
+        console.error("Failed to parse JSON response:", responseText,error);
         throw new Error("Invalid JSON response from server");
       }
 
