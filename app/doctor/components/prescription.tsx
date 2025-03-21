@@ -71,12 +71,12 @@ export const Prescriptions = () => {
         console.log("Patients response status:", response.status); // Debugging
         return response.json();
       })
-      .then((responseData) => {
+      .then((responseData: { success: boolean; data: any[] }) => {
         console.log("Patients response data:", responseData); // Debugging
 
         // Extract the `data` field from the response and map to the required format
         if (responseData.success && Array.isArray(responseData.data)) {
-          const formattedPatients = responseData.data.map((patient: any) => ({
+          const formattedPatients = responseData.data.map((patient) => ({
             id: patient.id,
             full_name: `${patient.first_name} ${patient.last_name}`, // Combine first and last name
           }));
@@ -97,7 +97,7 @@ export const Prescriptions = () => {
         console.log("Doctor response status:", response.status); // Debugging
         return response.json();
       })
-      .then((data) => {
+      .then((data: { success: boolean; data: Doctor }) => {
         console.log("Doctor response data:", data); // Debugging
         if (data.success && data.data) {
           setDoctor(data.data); // Ensure the doctor data is correctly set
@@ -120,7 +120,7 @@ export const Prescriptions = () => {
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data: { success: boolean; data: Medicine[] }) => {
         console.log("Medicines response data:", data); // Debugging
         // Ensure the response has the `data` field and it's an array
         if (data.success && Array.isArray(data.data)) {

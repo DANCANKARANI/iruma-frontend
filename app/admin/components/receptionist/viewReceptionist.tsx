@@ -53,7 +53,7 @@ function ViewReceptionist() {
 
         // Check if data.data exists and is an array
         if (data.data && Array.isArray(data.data)) {
-          const mappedReceptionists = data.data.map((receptionist: any) => ({
+          const mappedReceptionists: Receptionist[] = data.data.map((receptionist: Receptionist) => ({
             id: receptionist.id,
             full_name: receptionist.full_name,
             email: receptionist.email,

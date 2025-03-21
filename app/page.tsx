@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode"; // Import the jwt-decode library
 interface CustomJwtPayload {
   role: string; // Add the 'role' field
   full_name: string;
-  [key: string]: any; // Allow other fields
+  [key: string]: string; // Allow other fields
 }
 
 export default function Home() {

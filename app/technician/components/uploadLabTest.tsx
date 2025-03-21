@@ -39,11 +39,10 @@ export default function UploadLabTests() {
         const data = await response.json();
         console.log("API Response:", data);
 
-        let patientsArray = Array.isArray(data) ? data : data.patients || data.data || [];
-        const transformedPatients = patientsArray.map((patient: any) => ({
+        const patientsArray = Array.isArray(data) ? data : data.patients || data.data || [];
+        const transformedPatients = patientsArray.map((patient: Patient) => ({
           id: patient.id,
-          name: patient.name || patient.fullName, // Ensure name is visible
-          labTests: patient.labTests || [],
+          name: patient.name,
         }));
 
         console.log("Transformed Patients:", transformedPatients);

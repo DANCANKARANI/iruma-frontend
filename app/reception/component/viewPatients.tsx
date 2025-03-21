@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaSearch, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaSearch, FaEdit, FaPlus } from "react-icons/fa";
 
 // Define the type for a patient
 interface Patient {
@@ -30,7 +30,7 @@ export const ViewPatients = () => {
   const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 

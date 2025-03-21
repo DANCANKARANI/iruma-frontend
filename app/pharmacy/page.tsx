@@ -7,7 +7,6 @@ import {
   FaShoppingCart,
   FaChartBar,
   FaComments,
-  FaCog,
   FaSignOutAlt,
   FaHome,
 } from "react-icons/fa";
@@ -21,7 +20,6 @@ import Messages from "./components/chat";
 // Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Pharmacy Dashboard</div>;
 
-const Settings = () => <div>⚙️ Pharmacy Settings</div>;
 
 export default function PharmacyDashboard() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");

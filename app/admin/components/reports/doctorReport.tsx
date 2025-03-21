@@ -71,6 +71,7 @@ export default function DoctorsReports() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      console.log(loading)
       try {
         // Fetch doctors
         const doctorsResponse = await fetch(`${API_URL}/admin/doctor/all`, {
@@ -116,6 +117,7 @@ export default function DoctorsReports() {
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch data");
         console.error("Error fetching data:", err);
+        console.log(error)
       } finally {
         setLoading(false);
       }
@@ -228,7 +230,7 @@ export default function DoctorsReports() {
       <div ref={chartRef} className="grid grid-cols-3 gap-4">
         {/* Bar Chart */}
         <div className="bg-white p-4 rounded shadow-md w-[400px] h-[300px]">
-          <h2 className="text-lg font-semibold mb-4">Doctors' Performance</h2>
+          <h2 className="text-lg font-semibold mb-4">Doctors Performance</h2>
           <Bar data={barChartData} options={{ responsive: true, maintainAspectRatio: false }} />
         </div>
 

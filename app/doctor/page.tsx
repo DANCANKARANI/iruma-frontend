@@ -23,9 +23,9 @@ import ReferPatient from "../reception/component/referPatient";
 import ViewLabTests from "./components/viewLabTests";
 
 // Components for each section
-const Dashboard = () => <div>🏥 Welcome to the Clinical Officer's Dashboard</div>;
+const Dashboard = () => <div>🏥 Welcome to the Clinical Officer&apos;s Dashboard</div>;
 const Billing = () => <div>💰 Billing and Payments</div>;
-const Settings = () => <div>⚙️ CO's Settings</div>;
+const Settings = () => <div>⚙️ CO&apos;s Settings</div>;
 
 
 export default function DoctorDashboard() {

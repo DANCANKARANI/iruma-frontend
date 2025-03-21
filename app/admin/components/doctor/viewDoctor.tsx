@@ -62,8 +62,12 @@ export default function ViewDoctors() {
           setError("Invalid data format: Expected an array of doctors");
           setDoctors([]); // Fallback to an empty array
         }
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
         setDoctors([]); // Fallback to an empty array
       } finally {
         setIsLoading(false);
@@ -119,9 +123,13 @@ export default function ViewDoctors() {
       );
       setSelectedDoctor(null);
       setIsEditing(false);
-    } catch (err: any) {
-      setError(err.message);
-    }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    }    
   };
 
   const handleDelete = (doctor: Doctor) => {
@@ -152,8 +160,12 @@ export default function ViewDoctors() {
       setDoctors((prev) => prev.filter((doctor) => doctor.id !== doctorToDelete.id));
       setDoctorToDelete(null);
       setShowDeleteConfirm(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -53,7 +54,7 @@ export default function FinancialReports() {
   };
 
   const exportToPDF = () => {
-    const doc: any = new jsPDF(); // Cast as `any`
+    const doc = new jsPDF(); // No need for `any`
     doc.text("Financial Report", 10, 10);
 
     // Define table headers for each report type
@@ -63,7 +64,7 @@ export default function FinancialReports() {
       expenseBreakdown: ["Category", "Amount (KES)"],
     };
 
-    let reportData: any[] = [];
+    let reportData: ReportData[] = [];
     if (selectedReport === "profitLoss") reportData = financialData.profitLoss;
     if (selectedReport === "revenueByMonth")
       reportData = financialData.revenueByMonth;

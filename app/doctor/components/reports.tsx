@@ -104,7 +104,7 @@ interface Prescription {
     name: string;
     form: string;
     in_stock: boolean;
-    inventories: any;
+    inventories: number;
     created_at: string;
     updated_at: string;
   }[];
@@ -117,8 +117,8 @@ export const Reports = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [labTests, setLabTests] = useState<LabTest[]>([]);
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [, setLoading] = useState(false);
+  const [, setError] = useState("");
   const chartRef = useRef(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;

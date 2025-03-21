@@ -32,6 +32,14 @@ interface LipaNaMpesaDetails {
   account_reference: string;
 }
 
+// Define the API response structure for billing items
+interface ApiBillingItem {
+  id: string;
+  description: string;
+  quantity: number;
+  price: number;
+}
+
 export default function BillingDetails({ patient, onBack }: BillingDetailsProps) {
   const [items, setItems] = useState<BillingItem[]>([]);
   const [showMpesaModal, setShowMpesaModal] = useState(false);
@@ -68,7 +76,7 @@ export default function BillingDetails({ patient, onBack }: BillingDetailsProps)
         if (data.success) {
           // Map the API response to the BillingItem interface
           setItems(
-            data.data.map((bill: any) => ({
+            data.data.map((bill: ApiBillingItem) => ({
               id: bill.id,
               description: bill.description,
               quantity: bill.quantity || 1, // Default to 1 if quantity is 0
@@ -97,7 +105,7 @@ export default function BillingDetails({ patient, onBack }: BillingDetailsProps)
   };
 
   // Handle changes to item fields (description, quantity, price)
-  const handleChange = (id: string, field: keyof BillingItem, value: any) => {
+  const handleChange = (id: string, field: keyof BillingItem, value: string | number) => {
     setItems(
       items.map((item) =>
         item.id === id ? { ...item, [field]: value } : item

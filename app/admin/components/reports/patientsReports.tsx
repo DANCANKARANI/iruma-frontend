@@ -54,10 +54,42 @@ interface Patient {
   billing?: { total: number; status: string }[];
 }
 
+interface DemographicsReportItem {
+  name: string;
+  gender: string;
+  dob: string;
+  patient_number: string;
+  phone_number: string;
+  email: string;
+  address: string;
+  blood_group: string;
+  medical_history: string;
+  is_emergency: string;
+  emergency_contact: string;
+  triage_level: string;
+  initial_vitals: string;
+  emergency_notes: string;
+}
+
+interface VisitHistoryReportItem {
+  patient: string;
+  date: string;
+  department: string;
+  reason: string;
+}
+
+interface BillingReportItem {
+  patient: string;
+  total: number;
+  status: string;
+}
+
+type ReportDataItem = DemographicsReportItem | VisitHistoryReportItem | BillingReportItem;
+
 export default function PatientReports() {
   const [selectedReport, setSelectedReport] = useState<ReportType>("demographics");
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
@@ -92,7 +124,7 @@ export default function PatientReports() {
 
   // Export to PDF
   const exportToPDF = () => {
-    const doc: any = new jsPDF();
+    const doc = new jsPDF();
     doc.text("Patient Report", 10, 10);
 
     // Define the table headers for each report type
@@ -117,7 +149,7 @@ export default function PatientReports() {
       billing: ["Patient", "Total (KES)", "Status"],
     };
 
-    let reportData: any[] = [];
+    let reportData: ReportDataItem[] = [];
     if (selectedReport === "demographics") {
       reportData = patients.map((patient) => ({
         name: `${patient.first_name} ${patient.last_name}`,
@@ -159,28 +191,36 @@ export default function PatientReports() {
     // Prepare the table body based on the selected report
     const tableData = reportData.map((item) => {
       if (selectedReport === "demographics") {
+        const demographicsItem = item as DemographicsReportItem;
         return [
-          item.name,
-          item.gender,
-          item.dob,
-          item.patient_number,
-          item.phone_number,
-          item.email,
-          item.address,
-          item.blood_group,
-          item.medical_history,
-          item.is_emergency,
-          item.emergency_contact,
-          item.triage_level,
-          item.initial_vitals,
-          item.emergency_notes,
+          demographicsItem.name,
+          demographicsItem.gender,
+          demographicsItem.dob,
+          demographicsItem.patient_number,
+          demographicsItem.phone_number,
+          demographicsItem.email,
+          demographicsItem.address,
+          demographicsItem.blood_group,
+          demographicsItem.medical_history,
+          demographicsItem.is_emergency,
+          demographicsItem.emergency_contact,
+          demographicsItem.triage_level,
+          demographicsItem.initial_vitals,
+          demographicsItem.emergency_notes,
         ];
       }
       if (selectedReport === "visitHistory") {
-        return [item.patient, item.date, item.department, item.reason];
+        const visitHistoryItem = item as VisitHistoryReportItem;
+        return [
+          visitHistoryItem.patient,
+          visitHistoryItem.date,
+          visitHistoryItem.department,
+          visitHistoryItem.reason,
+        ];
       }
       if (selectedReport === "billing") {
-        return [item.patient, item.total, item.status];
+        const billingItem = item as BillingReportItem;
+        return [billingItem.patient, billingItem.total, billingItem.status];
       }
       return [];
     });
@@ -198,41 +238,41 @@ export default function PatientReports() {
 
   // Export to Excel
   const exportToExcel = () => {
-    let reportData: any[] = [];
+    let reportData: ReportDataItem[] = [];
     if (selectedReport === "demographics") {
       reportData = patients.map((patient) => ({
-        Name: `${patient.first_name} ${patient.last_name}`,
-        Gender: patient.gender,
-        DOB: patient.dob,
-        "Patient Number": patient.patient_number,
-        Phone: patient.phone_number,
-        Email: patient.email,
-        Address: patient.address,
-        "Blood Group": patient.blood_group,
-        "Medical History": patient.medical_history,
-        "Emergency Status": patient.is_emergency ? "Yes" : "No",
-        "Emergency Contact": patient.emergency_contact,
-        "Triage Level": patient.triage_level,
-        "Initial Vitals": patient.initial_vitals,
-        "Emergency Notes": patient.emergency_notes,
+        name: `${patient.first_name} ${patient.last_name}`,
+        gender: patient.gender,
+        dob: patient.dob,
+        patient_number: patient.patient_number,
+        phone_number: patient.phone_number,
+        email: patient.email,
+        address: patient.address,
+        blood_group: patient.blood_group,
+        medical_history: patient.medical_history,
+        is_emergency: patient.is_emergency ? "Yes" : "No",
+        emergency_contact: patient.emergency_contact,
+        triage_level: patient.triage_level,
+        initial_vitals: patient.initial_vitals,
+        emergency_notes: patient.emergency_notes,
       }));
     }
     if (selectedReport === "visitHistory") {
       reportData = patients.flatMap((patient) =>
         (patient.visits || []).map((visit) => ({
-          Patient: `${patient.first_name} ${patient.last_name}`,
-          Date: visit.date,
-          Department: visit.department,
-          Reason: visit.reason,
+          patient: `${patient.first_name} ${patient.last_name}`,
+          date: visit.date,
+          department: visit.department,
+          reason: visit.reason,
         }))
       );
     }
     if (selectedReport === "billing") {
       reportData = patients.flatMap((patient) =>
         (patient.billing || []).map((bill) => ({
-          Patient: `${patient.first_name} ${patient.last_name}`,
-          Total: bill.total,
-          Status: bill.status,
+          patient: `${patient.first_name} ${patient.last_name}`,
+          total: bill.total,
+          status: bill.status,
         }))
       );
     }
@@ -404,7 +444,18 @@ export default function PatientReports() {
         >
           Demographics
         </button>
-       
+        <button
+          onClick={() => setSelectedReport("visitHistory")}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Visit History
+        </button>
+        <button
+          onClick={() => setSelectedReport("billing")}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Billing
+        </button>
       </div>
 
       {/* Flex container for report and export options */}

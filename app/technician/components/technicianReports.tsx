@@ -43,8 +43,8 @@ interface LabTest {
 
 export default function TechnicianReports() {
   const [labTests, setLabTests] = useState<LabTest[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [, setLoading] = useState(false);
+  const [, setError] = useState("");
   const chartRef = useRef(null); // Reference for exporting PDF
 
   const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;

@@ -215,9 +215,9 @@ export default function Prescriptions() {
             </h3>
             <p className="text-gray-600">Diagnosis: {prescription.diagnosis}</p>
             <p className="text-gray-600">Doctor: {prescription.doctor.full_name}</p>
-            <p className="text-gray-600">Doctor's Contact: {prescription.doctor.phone_number}</p>
-            <p className="text-gray-600">Patient's Contact: {prescription.patient.phone_number}</p>
-            <p className="text-gray-600">Patient's Address: {prescription.patient.address}</p>
+            <p className="text-gray-600">Doctor&apos;s Contact: {prescription.doctor.phone_number}</p>
+            <p className="text-gray-600">Patient&apos;s Contact: {prescription.patient.phone_number}</p>
+            <p className="text-gray-600">Patient&apos;s Address: {prescription.patient.address}</p>
             <p className="text-gray-600">Prescription Date: {new Date(prescription.created_at).toLocaleDateString()}</p>
 
             <table className="w-full border-collapse border border-gray-300 mt-4">

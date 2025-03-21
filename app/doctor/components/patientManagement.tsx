@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaSearch, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaSearch, FaEdit } from "react-icons/fa";
 import { getCookie } from "cookies-next";
 
 // Define the type for a patient
@@ -31,10 +31,10 @@ export const Patients = () => {
   const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
+ 
 
 
   const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;

@@ -50,7 +50,7 @@ function ViewTechnician() {
       .then((data) => {
         console.log("API Response:", data);
         if (data.data && Array.isArray(data.data)) {
-          const mappedTechnicians = data.data.map((technician: any) => ({
+          const mappedTechnicians: Technician[] = data.data.map((technician: Technician) => ({
             id: technician.id,
             full_name: technician.full_name,
             email: technician.email,
@@ -58,6 +58,7 @@ function ViewTechnician() {
             address: technician.address,
             role: technician.role,
           }));
+        
           setTechnicians(mappedTechnicians);
           setFilteredTechnicians(mappedTechnicians);
         } else {

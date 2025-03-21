@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaUsers, FaUpload, FaClipboardList, FaSignOutAlt, FaChartBar } from "react-icons/fa";
+import { FaUsers, FaClipboardList, FaSignOutAlt, FaChartBar } from "react-icons/fa";
 
 import Navbar from "../admin/components/navbar";
 import Cookies from "js-cookie";
@@ -10,7 +10,7 @@ import LabTestRequests from "./components/labTest";
 import TechnicianReports from "./components/technicianReports";
 
 // Components for each section
-const Dashboard = () => <div>🔬 Welcome to the Lab Technician's Dashboard</div>;
+const Dashboard = () => <div>🔬 Welcome to the Lab Technician&apos;s Dashboard</div>;
 
 export default function LabTechnician() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");

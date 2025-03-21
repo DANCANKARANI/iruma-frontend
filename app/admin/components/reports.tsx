@@ -1,6 +1,5 @@
 import { useState } from "react";
 import PatientReports from "./reports/patientsReports";
-import FinancialReports from "./reports/financialReport";
 import DoctorsReports from "./reports/doctorReport";
 import Reports from "@/app/pharmacy/components/reports";
 
@@ -15,8 +14,6 @@ export default function AdminReports() {
         return <PatientReports/>
       case "pharmacy":
         return <Reports/>
-      case "financial":
-        return <FinancialReports/>
       case "doctors":
         return <DoctorsReports/>
    

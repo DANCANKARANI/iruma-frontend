@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import EditPharmacist from "./EditPharmacist"; // Import the edit component
@@ -32,7 +31,7 @@ function ViewPharmacist() {
       .then((response) => response.json())
       .then((data) => {
         // Map the JSON data to the Pharmacist interface
-        const mappedPharmacists = data.data.map((pharmacist: any) => ({
+        const mappedPharmacists: Pharmacist[] = data.data.map((pharmacist: Pharmacist) => ({
           id: pharmacist.id,
           full_name: pharmacist.full_name,
           email: pharmacist.email,
@@ -40,6 +39,7 @@ function ViewPharmacist() {
           address: pharmacist.address,
           role: pharmacist.role,
         }));
+        
         setPharmacists(mappedPharmacists);
         setFilteredPharmacists(mappedPharmacists);
       })

@@ -3,7 +3,6 @@
 import { SetStateAction, useState } from "react";
 
 import Sidebar from "./component/sidebar";
-import ReceptionDashboard from "./component/dashboard";
 import Navbar from "../admin/components/navbar";
 import BookAppointment from "./component/bookAppointment";
 import ViewAppointments from "./component/viewAppointments";
@@ -16,7 +15,7 @@ import AssignClinic from "./component/assignClinic";
 
 
 
-export default function receptionDashboard() {
+export default function ReceptionDashboard() {
   // State to track the active view
   const [activeView, setActiveView] = useState("register-patient");
 
