@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Cookies from "js-cookie";
 
 export default function AddDoctor() {
