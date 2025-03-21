@@ -14,7 +14,7 @@ interface LabTestResult {
     first_name: string;
     last_name: string;
   };
-  results: Record<string, { result: string; remarks: string; tested_by: string }>;
+  results: Record<string, { result: string; remarks: string; tested_by: string }> | null; // Allow null
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -100,7 +100,7 @@ export default function ViewLabTests() {
                 </td>
                 <td className="px-4 py-2">
                   <ul>
-                    {Object.entries(labTest.results).map(([timestamp, result]) => (
+                    {Object.entries(labTest.results || {}).map(([timestamp, result]) => (
                       <li key={timestamp} className="mb-2">
                         <div className="text-sm text-gray-700">
                           <strong>Result:</strong> {result.result}
@@ -126,4 +126,3 @@ export default function ViewLabTests() {
     </div>
   );
 }
-
