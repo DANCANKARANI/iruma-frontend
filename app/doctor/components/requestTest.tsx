@@ -10,25 +10,21 @@ interface Patient {
 }
 
 interface LabTest {
-  id: string;
   test_name: string;
   description: string;
   sample_type: string;
   is_active: boolean;
   patient_id: string;
-  results: unknown; // Adjust this type based on your actual results structure
 }
 
 export default function RequestLabTest() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [formData, setFormData] = useState<LabTest>({
-    id: "",
     test_name: "",
     description: "",
     sample_type: "",
     is_active: true,
     patient_id: "",
-    results: null,
   });
 
   const [successMessage, setSuccessMessage] = useState("");
@@ -76,7 +72,8 @@ export default function RequestLabTest() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,7 +88,7 @@ export default function RequestLabTest() {
     console.log("Submitting request:", JSON.stringify(formData, null, 2)); // Log before sending
 
     try {
-      const response = await fetch(`${API_URL}/reception`, {
+      const response = await fetch(`${API_URL}/technician`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -100,24 +97,34 @@ export default function RequestLabTest() {
         body: JSON.stringify(formData),
       });
 
-      const responseData = await response.json();
+      const responseText = await response.text();
+      console.log("Response status:", response.status);
+      console.log("Response text:", responseText);
+
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText); // Attempt to parse JSON
+      } catch (error) {
+        console.error("Failed to parse JSON response:", responseText);
+        throw new Error("Invalid JSON response from server");
+      }
 
       if (response.ok) {
         setSuccessMessage("Lab Test Request Sent Successfully!");
         setFormData({
-          id: "",
           test_name: "",
           description: "",
           sample_type: "",
           is_active: true,
           patient_id: "",
-          results: null,
         });
       } else {
         console.error("Failed to send request:", responseData);
+        setSuccessMessage(`Error: ${responseData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error submitting request:", error);
+      setSuccessMessage("An unexpected error occurred. Please try again.");
     }
   };
 
