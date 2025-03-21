@@ -1,18 +1,16 @@
-// Make sure this file is treated as a Client Component
 "use client";
 
 import { useState } from "react";
 import {
   FaTachometerAlt,
   FaUserAlt,
-  FaFileAlt,
-  FaCogs,
-  FaAdjust,
+  FaFileInvoiceDollar, // Billing Icon
   FaChevronDown,
   FaPlus,
   FaEye,
-  FaFileInvoiceDollar, // Billing Icon
   FaExchangeAlt, // Refer Patient Icon
+  FaSignOutAlt, // Log Out Icon
+  FaCalendarCheck, // Booked Patients Icon
 } from "react-icons/fa";
 
 export default function Sidebar({ onSelect }: { onSelect: (view: string) => void }) {
@@ -91,6 +89,15 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
             )}
           </div>
 
+          {/* Booked Patients Button */}
+          <button
+            onClick={() => onSelect("clinicians")}
+            className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
+          >
+            <FaCalendarCheck className="mr-4" />
+            {isSidebarOpen && <span>Clinicians</span>}
+          </button>
+
           {/* Billing Button */}
           <button
             onClick={() => onSelect("billing")}
@@ -99,29 +106,23 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
             <FaFileInvoiceDollar className="mr-4" />
             {isSidebarOpen && <span>Billing</span>}
           </button>
-
-          {/* Settings & Mode Change */}
-          <button
-            onClick={() => onSelect("settings")}
-            className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
-          >
-            <FaCogs className="mr-4" />
-            {isSidebarOpen && <span>Settings</span>}
-          </button>
-
-          <button
-            onClick={() => onSelect("change-mode")}
-            className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
-          >
-            <FaAdjust className="mr-4" />
-            {isSidebarOpen && <span>Change Mode</span>}
-          </button>
         </nav>
 
         {/* Footer Section */}
-        <div className="px-4 py-2 text-xs text-center border-t border-gray-700">
-          <p>Powered by Pentabyte © 2025</p>
-          <p>v1.12</p>
+        <div className="px-4 py-2 border-t border-gray-700">
+          {/* Log Out Button */}
+          <button
+            onClick={() => onSelect("logout")}
+            className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-red-600 rounded border border-gray-600 text-white"
+          >
+            <FaSignOutAlt className="mr-4" />
+            {isSidebarOpen && <span>Log Out</span>}
+          </button>
+
+          <div className="text-xs text-center mt-2">
+            <p>Powered by Pentabyte © 2025</p>
+            <p>v1.12</p>
+          </div>
         </div>
       </aside>
     </div>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaUsers, FaUpload, FaClipboardList, FaSignOutAlt } from "react-icons/fa";
+import { FaUsers, FaUpload, FaClipboardList, FaSignOutAlt, FaChartBar } from "react-icons/fa";
 
 import Navbar from "../admin/components/navbar";
 import Cookies from "js-cookie";
 import { Patients } from "../doctor/components/patientManagement";
 import LabTestRequests from "./components/labTest";
+import TechnicianReports from "./components/technicianReports";
 
 // Components for each section
 const Dashboard = () => <div>🔬 Welcome to the Lab Technician's Dashboard</div>;
@@ -43,6 +44,7 @@ export default function LabTechnician() {
           {selectedPage === "Dashboard" && <Dashboard />}
           {selectedPage === "Patients" && <Patients />}
           {selectedPage === "LabTestRequests" && <LabTestRequests />}
+          {selectedPage === "Reports" && <TechnicianReports />}
         </div>
       </div>
     </div>
@@ -62,32 +64,32 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "Dashboard", icon: <FaUsers /> },
     { name: "Patients", icon: <FaUsers /> },
     { name: "LabTestRequests", icon: <FaClipboardList /> },
-   
+    { name: "Reports", icon: <FaChartBar /> }, // Added Reports button
   ];
 
   return (
-    <div className={`h-screen ${isOpen ? "w-64" : "w-20"} bg-blue-900 text-white flex flex-col transition-all duration-300 sticky top-0 z-50 overflow-y-auto`}>
+    <div className={`h-screen ${isOpen ? "w-64" : "w-20"} bg-gray-900 text-white flex flex-col transition-all duration-300 sticky top-0 z-50 overflow-y-auto`}>
       {/* Sidebar Header */}
-      <div className="flex items-center justify-between p-4 border-b border-blue-700">
-        <h2 className={`${isOpen ? "block" : "hidden"} text-xl font-bold`}>Lab Technician Panel</h2>
-        <button onClick={() => setIsOpen(!isOpen)} className="text-white focus:outline-none">
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        <h2 className={`${isOpen ? "block" : "hidden"} text-xl font-bold`}>Lab Technician</h2>
+        <button onClick={() => setIsOpen(!isOpen)} className="text-gray-300 hover:text-white focus:outline-none">
           {isOpen ? "✖" : "☰"}
         </button>
       </div>
 
       {/* Sidebar Menu */}
       <nav className="flex-1 p-4">
-        <ul className="space-y-4">
+        <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.name}>
               <button
                 onClick={() => setSelectedPage(item.name)}
-                className={`flex items-center space-x-4 p-2 rounded w-full text-left ${
-                  selectedPage === item.name ? "bg-blue-700" : "hover:bg-blue-700"
+                className={`flex items-center space-x-4 p-3 rounded w-full text-left transition-all ${
+                  selectedPage === item.name ? "bg-gray-700" : "hover:bg-gray-800"
                 }`}
               >
                 {item.icon}
-                {isOpen && <span>{item.name}</span>}
+                {isOpen && <span className="text-gray-300 hover:text-white">{item.name}</span>}
               </button>
             </li>
           ))}
@@ -95,8 +97,8 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-blue-700">
-        <button className="flex items-center space-x-4 p-2 hover:bg-blue-700 rounded w-full">
+      <div className="p-4 border-t border-gray-700">
+        <button className="flex items-center space-x-4 p-3 hover:bg-gray-800 rounded w-full">
           <FaSignOutAlt />
           {isOpen && <span>Logout</span>}
         </button>

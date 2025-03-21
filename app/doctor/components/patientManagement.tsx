@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FaSearch, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { getCookie } from "cookies-next";
 
 // Define the type for a patient
 interface Patient {
@@ -33,6 +34,8 @@ export const Patients = () => {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
+
 
   const API_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
 
@@ -77,22 +80,32 @@ export const Patients = () => {
       .includes(search.toLowerCase())
   );
 
+ 
+
   // Handle adding a new patient
   const handleAddPatient = async (newPatient: Patient) => {
     setLoading(true);
+    newPatient.is_emergency = true; // Ensure is_emergency is set to true
+  
+    // Retrieve the JWT token from cookies
+    const token = getCookie("Authorization");
+    console.log(token)
     try {
       const response = await fetch(`${API_URL}/reception`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the JWT token in the headers
+        },
         body: JSON.stringify(newPatient),
       });
-
+  
       const result = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(result.message || "Failed to add patient");
       }
-
+  
       setPatients([result.data, ...patients]);
       setIsModalOpen(false);
       alert("Patient added successfully!");
@@ -105,67 +118,9 @@ export const Patients = () => {
     }
   };
 
-  // Handle editing a patient
-  const handleEditPatient = async (updatedPatient: Patient) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/patient/${updatedPatient.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedPatient),
-      });
+  
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to update patient");
-      }
-
-      setPatients(
-        patients.map((patient) =>
-          patient.id === updatedPatient.id ? result.data : patient
-        )
-      );
-      setIsModalOpen(false);
-      alert("Patient updated successfully!");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update patient");
-      alert("Failed to update patient. Please try again.");
-      console.error("Error updating patient:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle deleting a patient
-  const handleDeletePatient = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this patient?")) {
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_URL}/patient/${id}`, {
-        method: "DELETE",
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to delete patient");
-      }
-
-      setPatients(patients.filter((patient) => patient.id !== id));
-      setIsModalOpen(false);
-      alert("Patient deleted successfully!");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete patient");
-      alert("Failed to delete patient. Please try again.");
-      console.error("Error deleting patient:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   // Open modal for viewing or editing a patient
   const openModal = (patient: Patient | null, editMode: boolean = false) => {
@@ -190,13 +145,6 @@ export const Patients = () => {
             aria-label="Search patients"
           />
         </div>
-        <button
-          onClick={() => openModal(null, true)}
-          className="px-4 py-2 bg-green-600 text-white rounded flex items-center"
-          aria-label="Add patient"
-        >
-          <FaPlus className="mr-2" /> Add Patient
-        </button>
       </div>
 
       {/* Patient List */}
@@ -251,8 +199,8 @@ export const Patients = () => {
           patient={currentPatient}
           isEditMode={isEditMode}
           onClose={() => setIsModalOpen(false)}
-          onSubmit={isEditMode ? handleEditPatient : handleAddPatient}
-          onDelete={isEditMode ? handleDeletePatient : undefined}
+          onSubmit={isEditMode ? handleAddPatient : handleAddPatient}
+          
         />
       )}
     </div>

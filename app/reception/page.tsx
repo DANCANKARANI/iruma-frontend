@@ -12,6 +12,7 @@ import Setting from "./component/setting";
 import Billing from "./component/billing";
 import {ViewPatients} from "./component/viewPatients";
 import ReferPatient from "./component/referPatient";
+import AssignClinic from "./component/assignClinic";
 
 
 
@@ -39,6 +40,9 @@ export default function receptionDashboard() {
 
       case "refer-patient":
         return <ReferPatient />
+      
+      case "clinicians":
+         return <AssignClinic />
       
       case "settings":
         return <Setting/>

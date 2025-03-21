@@ -39,7 +39,6 @@ export default function PharmacyDashboard() {
         {selectedPage === "Orders & Sales" && <Orders />}
         {selectedPage === "Messages" && <Messages />}
         {selectedPage === "Reports" && <Reports />}
-        {selectedPage === "Settings" && <Settings />}
       </div>
     </div>
   );
@@ -61,7 +60,6 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "Orders & Sales", icon: <FaShoppingCart /> },
     { name: "Messages", icon: <FaComments /> },
     { name: "Reports", icon: <FaChartBar /> },
-    { name: "Settings", icon: <FaCog /> },
   ];
 
   return (

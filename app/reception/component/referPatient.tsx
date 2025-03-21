@@ -33,6 +33,7 @@ export default function ReferPatient() {
       return;
     }
 
+    // Fetch patients from the API
     fetch(`${apiEndpoint}/patient`, {
       method: "GET",
       headers: {
@@ -69,29 +70,48 @@ export default function ReferPatient() {
       return;
     }
 
+    // Prepare lab_results as a JSON string
+    const labResults = JSON.stringify({
+      [formData.test_name]: formData.test_result,
+    });
+
     try {
+      // Log the request payload for debugging
+      const requestPayload = {
+        referred_to: formData.referred_to,
+        reason: formData.reason,
+        diagnosis: formData.diagnosis,
+        lab_results: labResults,
+        status: formData.status,
+        patient_id: selectedPatient, // Send selected patient ID
+      };
+      console.log("Request Payload:", JSON.stringify(requestPayload, null, 2));
+
       const response = await fetch(`${apiEndpoint}/patient/${selectedPatient}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          ...formData,
-          patient_id: selectedPatient, // Send selected patient ID
-        }),
+        body: JSON.stringify(requestPayload),
       });
 
-      const data = await response.json();
-
+      // Check if the response is OK (status code 2xx)
       if (!response.ok) {
-        throw new Error(data.message || "Failed to submit referral");
+        // Attempt to parse the error message
+        const errorText = await response.text();
+        console.error("Server Error:", errorText);
+        throw new Error(errorText || "Failed to submit referral");
       }
+
+      // Parse the response as JSON
+      const data = await response.json();
 
       alert("Referral submitted successfully!");
       console.log("Response:", data);
     } catch (err) {
       console.error("Error submitting referral:", err);
+      alert("An error occurred while submitting the referral. Please check the console for details.");
     }
   };
 

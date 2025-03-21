@@ -13,6 +13,7 @@ import Reports from "./components/reports";
 import ApplicationSettings from "./components/settings";
 import ViewTechnician from "./components/technician/viewTechnician";
 import ViewReceptionist from "./components/receptionist/viewReceptionist";
+import AdminReports from "./components/reports";
 
 export default function Dashboard() {
   // State to track the active view
@@ -34,7 +35,7 @@ export default function Dashboard() {
         return <ViewPharmacist />;
 
       case "reports":
-        return <Reports/>
+        return <AdminReports/>
 
       case "settings":
         return <ApplicationSettings />;

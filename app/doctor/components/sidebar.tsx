@@ -12,7 +12,6 @@ import {
   FaCog,
   FaSignOutAlt,
   FaFlask, // Lab Test Icon
-  FaFileMedical // View Uploaded Lab Tests Icon
 } from "react-icons/fa";
 
 export default function Sidebar() {

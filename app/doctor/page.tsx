@@ -19,13 +19,14 @@ import Navbar from "../admin/components/navbar";
 import Cookies from "js-cookie";
 import Messages from "./components/chat";
 import RequestLabTest from "./components/requestTest";
+import ReferPatient from "../reception/component/referPatient";
+import ViewLabTests from "./components/viewLabTests";
 
 // Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Clinical Officer's Dashboard</div>;
 const Billing = () => <div>💰 Billing and Payments</div>;
 const Settings = () => <div>⚙️ CO's Settings</div>;
 
-const ViewLabTests = () => <div>📄 View Uploaded Lab Tests</div>;
 
 export default function DoctorDashboard() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
@@ -61,6 +62,7 @@ export default function DoctorDashboard() {
           {selectedPage === "Request Lab Test" && <RequestLabTest />}
           {selectedPage === "View Lab Tests" && <ViewLabTests />}
           {selectedPage === "Prescriptions" && <Prescriptions />}
+          {selectedPage === "Refer Patient" && <ReferPatient />}
           {selectedPage === "Billing" && <Billing />}
           {selectedPage === "Messages" && <Messages />}
           {selectedPage === "Reports" && <Reports />}
@@ -87,6 +89,7 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "View Lab Tests", icon: <FaFileMedical /> },
     { name: "Prescriptions", icon: <FaClipboardList /> },
     { name: "Messages", icon: <FaComments /> },
+    { name: "Refer Patient", icon: <FaComments /> },
     { name: "Reports", icon: <FaChartBar /> },
     { name: "Settings", icon: <FaCog /> },
   ];

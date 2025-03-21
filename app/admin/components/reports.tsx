@@ -1,11 +1,10 @@
 import { useState } from "react";
 import PatientReports from "./reports/patientsReports";
-import PharmacyReport from "./reports/pharmacyReport";
 import FinancialReports from "./reports/financialReport";
 import DoctorsReports from "./reports/doctorReport";
-import OperationReports from "./reports/operationReport";
+import Reports from "@/app/pharmacy/components/reports";
 
-export default function Reports() {
+export default function AdminReports() {
   // State to manage active report type
   const [activeReport, setActiveReport] = useState<string>("");
 
@@ -15,13 +14,12 @@ export default function Reports() {
       case "patients":
         return <PatientReports/>
       case "pharmacy":
-        return <PharmacyReport/>
+        return <Reports/>
       case "financial":
         return <FinancialReports/>
       case "doctors":
         return <DoctorsReports/>
-      case "operations":
-        return <OperationReports/>
+   
       default:
         return <div>Select a report type to view details.</div>;
     }
@@ -55,24 +53,10 @@ export default function Reports() {
             activeReport === "financial" ? "bg-blue-600 text-white" : "bg-gray-200"
           }`}
         >
-          Financial Reports
-        </button>
-        <button
-          onClick={() => setActiveReport("doctors")}
-          className={`px-4 py-2 border rounded ${
-            activeReport === "doctors" ? "bg-blue-600 text-white" : "bg-gray-200"
-          }`}
-        >
+       
           Doctor Reports
         </button>
-        <button
-          onClick={() => setActiveReport("operations")}
-          className={`px-4 py-2 border rounded ${
-            activeReport === "operations" ? "bg-blue-600 text-white" : "bg-gray-200"
-          }`}
-        >
-          Operations Reports
-        </button>
+        
       </div>
 
       {/* Report Content */}

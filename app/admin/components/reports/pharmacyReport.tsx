@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement } from "chart.js";
 import { jsPDF } from 'jspdf';
@@ -9,61 +9,50 @@ import * as XLSX from "xlsx";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement);
 
-type ReportType = "inventory" | "sales" | "prescriptions" | "returns"; // Report types
+type ReportType = "inventory" | "prescriptions"; // Only inventory and prescriptions
 
 export default function PharmacyReport() {
   const [selectedReport, setSelectedReport] = useState<ReportType>("inventory");
+  const [reportData, setReportData] = useState<any[]>([]); // Store fetched data
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
 
-  // Sample data for pharmacy reports
-  const reportsData = {
-    inventory: [
-      { id: 1, name: "Paracetamol", quantity: 150, price: 20 },
-      { id: 2, name: "Amoxicillin", quantity: 100, price: 25 },
-    ],
-    sales: [
-      { id: 1, patient: "John Doe", medicine: "Paracetamol", date: "2025-01-15", quantity: 2, total: 40 },
-      { id: 2, patient: "Jane Smith", medicine: "Amoxicillin", date: "2025-01-18", quantity: 1, total: 25 },
-    ],
-    prescriptions: [
-      { id: 1, patient: "John Doe", medicine: "Paracetamol", dose: "500mg", date: "2025-01-15" },
-      { id: 2, patient: "Jane Smith", medicine: "Amoxicillin", dose: "250mg", date: "2025-01-18" },
-    ],
-    returns: [
-      { id: 1, patient: "John Doe", medicine: "Paracetamol", quantity: 1, reason: "Wrong dosage", date: "2025-01-17" },
-      { id: 2, patient: "Jane Smith", medicine: "Amoxicillin", quantity: 1, reason: "Expired", date: "2025-01-20" },
-    ],
-  };
+  useEffect(() => {
+    const fetchReportData = async () => {
+      setLoading(true);
+      try {
+        let url = "";
+        if (selectedReport === "inventory") {
+          url = "/api/inventory"; // Update with your API endpoint
+        } else if (selectedReport === "prescriptions") {
+          url = "/api/prescriptions"; // Update with your API endpoint
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch report data");
+        const data = await response.json();
+        setReportData(data);
+      } catch (error) {
+        console.error("Error fetching report data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReportData();
+  }, [selectedReport]); // Fetch data when `selectedReport` changes
 
   const exportToPDF = () => {
-    const doc: any = new jsPDF(); // Cast as `any`
+    const doc: any = new jsPDF();
     doc.text("Pharmacy Report", 10, 10);
 
     const headers = {
       inventory: ["Medicine", "Quantity", "Price (KES)"],
-      sales: ["Patient", "Medicine", "Date", "Quantity", "Total (KES)"],
       prescriptions: ["Patient", "Medicine", "Dose", "Date"],
-      returns: ["Patient", "Medicine", "Quantity", "Reason", "Date"],
     };
 
-    let reportData: any[] = [];
-    if (selectedReport === "inventory") reportData = reportsData.inventory;
-    if (selectedReport === "sales") reportData = reportsData.sales;
-    if (selectedReport === "prescriptions") reportData = reportsData.prescriptions;
-    if (selectedReport === "returns") reportData = reportsData.returns;
-
     const tableData = reportData.map((item) => {
-      if (selectedReport === "inventory") {
-        return [item.name, item.quantity, item.price];
-      }
-      if (selectedReport === "sales") {
-        return [item.patient, item.medicine, item.date, item.quantity, item.total];
-      }
-      if (selectedReport === "prescriptions") {
-        return [item.patient, item.medicine, item.dose, item.date];
-      }
-      if (selectedReport === "returns") {
-        return [item.patient, item.medicine, item.quantity, item.reason, item.date];
-      }
+      if (selectedReport === "inventory") return [item.name, item.quantity, item.price];
+      if (selectedReport === "prescriptions") return [item.patient, item.medicine, item.dose, item.date];
       return [];
     });
 
@@ -77,30 +66,18 @@ export default function PharmacyReport() {
   };
 
   const exportToExcel = () => {
-    let reportData: any[] = [];
-    if (selectedReport === "inventory") reportData = reportsData.inventory;
-    if (selectedReport === "sales") reportData = reportsData.sales;
-    if (selectedReport === "prescriptions") reportData = reportsData.prescriptions;
-    if (selectedReport === "returns") reportData = reportsData.returns;
-
     const worksheet = XLSX.utils.json_to_sheet(reportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, selectedReport);
-
     XLSX.writeFile(workbook, `${selectedReport}_report.xlsx`);
   };
 
   const renderReport = () => {
-    const chartOptions = {
-      responsive: true,
-      maintainAspectRatio: true,
-    };
+    if (loading) return <p>Loading...</p>;
+    if (reportData.length === 0) return <p>No data available.</p>;
 
-    const chartStyle = {
-      maxWidth: "400px",
-      maxHeight: "300px",
-      margin: "0 auto",
-    };
+    const chartOptions = { responsive: true, maintainAspectRatio: true };
+    const chartStyle = { maxWidth: "400px", maxHeight: "300px", margin: "0 auto" };
 
     switch (selectedReport) {
       case "inventory":
@@ -110,34 +87,12 @@ export default function PharmacyReport() {
             <div style={chartStyle}>
               <Pie
                 data={{
-                  labels: reportsData.inventory.map((item) => item.name),
+                  labels: reportData.map((item) => item.name),
                   datasets: [
                     {
                       label: "Medicines Stock",
-                      data: reportsData.inventory.map((item) => item.quantity),
+                      data: reportData.map((item) => item.quantity),
                       backgroundColor: ["#4A90E2", "#FF6384"],
-                    },
-                  ],
-                }}
-                options={chartOptions}
-              />
-            </div>
-          </div>
-        );
-
-      case "sales":
-        return (
-          <div>
-            <h2 className="text-xl font-bold mb-4">Sales Report</h2>
-            <div style={chartStyle}>
-              <Bar
-                data={{
-                  labels: reportsData.sales.map((item) => item.patient),
-                  datasets: [
-                    {
-                      label: "Sales (KES)",
-                      data: reportsData.sales.map((item) => item.total),
-                      backgroundColor: "#36A2EB",
                     },
                   ],
                 }}
@@ -154,36 +109,14 @@ export default function PharmacyReport() {
             <div style={chartStyle}>
               <Line
                 data={{
-                  labels: reportsData.prescriptions.map((item) => item.patient),
+                  labels: reportData.map((item) => item.patient),
                   datasets: [
                     {
                       label: "Prescriptions Count",
-                      data: reportsData.prescriptions.map(() => 1),
+                      data: reportData.map(() => 1),
                       borderColor: "#FF6384",
                       backgroundColor: "rgba(255, 99, 132, 0.2)",
                       tension: 0.4,
-                    },
-                  ],
-                }}
-                options={chartOptions}
-              />
-            </div>
-          </div>
-        );
-
-      case "returns":
-        return (
-          <div>
-            <h2 className="text-xl font-bold mb-4">Returns Report</h2>
-            <div style={chartStyle}>
-              <Bar
-                data={{
-                  labels: reportsData.returns.map((item) => item.patient),
-                  datasets: [
-                    {
-                      label: "Returned Medicines",
-                      data: reportsData.returns.map((item) => item.quantity),
-                      backgroundColor: "#FF6384",
                     },
                   ],
                 }}
@@ -207,14 +140,8 @@ export default function PharmacyReport() {
         <button onClick={() => setSelectedReport("inventory")} className="bg-blue-600 text-white px-4 py-2 rounded">
           Inventory
         </button>
-        <button onClick={() => setSelectedReport("sales")} className="bg-blue-600 text-white px-4 py-2 rounded">
-          Sales
-        </button>
         <button onClick={() => setSelectedReport("prescriptions")} className="bg-blue-600 text-white px-4 py-2 rounded">
           Prescriptions
-        </button>
-        <button onClick={() => setSelectedReport("returns")} className="bg-blue-600 text-white px-4 py-2 rounded">
-          Returns
         </button>
       </div>
 
