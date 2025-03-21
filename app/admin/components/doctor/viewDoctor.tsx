@@ -39,11 +39,15 @@ export default function ViewDoctors() {
         setIsLoading(false);
         return;
       }
-
+      console.log(token)
       try {
         const response = await fetch(
+
           `${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor/all`,
+          
           {
+            method: "GET",
+            credentials: "include",
             headers: {
               Authorization: `Bearer ${token}`,
             },

@@ -57,7 +57,7 @@ export default function Home() {
         } else if (userRole === "admin") {
           router.push("/admin");
         } else if (userRole === "reception") {
-          router.push("/reception");
+          router.push("/receptionist");
         } else if (userRole === "pharmacist") {
           router.push("/pharmacy");
         }else if (userRole === "technician") {
