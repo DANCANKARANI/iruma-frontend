@@ -69,7 +69,7 @@ interface LabTest {
       remarks: string;
       tested_by: string;
     };
-  };
+  } | null; // Allow null
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -337,7 +337,7 @@ export const Reports = () => {
                   <tr key={test.id}>
                     <td className="p-2 border">{test.test_name}</td>
                     <td className="p-2 border">{test.patient.first_name} {test.patient.last_name}</td>
-                    <td className="p-2 border">{Object.keys(test.results).length} results</td>
+                    <td className="p-2 border">{Object.keys(test.results || {}).length} results</td>
                   </tr>
                 ))}
               </tbody>
