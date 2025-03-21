@@ -91,7 +91,7 @@ export default function RequestLabTest() {
     console.log("Submitting request:", JSON.stringify(formData, null, 2)); // Log before sending
 
     try {
-      const response = await fetch(`${API_URL}/labtest`, {
+      const response = await fetch(`${API_URL}/reception`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
