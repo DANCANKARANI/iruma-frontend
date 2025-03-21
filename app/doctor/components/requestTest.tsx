@@ -9,16 +9,26 @@ interface Patient {
   last_name: string;
 }
 
+interface LabTest {
+  id: string;
+  test_name: string;
+  description: string;
+  sample_type: string;
+  is_active: boolean;
+  patient_id: string;
+  results: unknown; // Adjust this type based on your actual results structure
+}
+
 export default function RequestLabTest() {
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [formData, setFormData] = useState({
-    test_name: "", // Matches API expected field
+  const [formData, setFormData] = useState<LabTest>({
+    id: "",
+    test_name: "",
     description: "",
-    cost: 75.5, // Default cost, can be changed
-    duration: "1 day", // Default duration
-    sample_type: "", // Matches API expected field
-    is_active: true, // Default to true
-    patient_id: "", // Matches API expected field
+    sample_type: "",
+    is_active: true,
+    patient_id: "",
+    results: null,
   });
 
   const [successMessage, setSuccessMessage] = useState("");
@@ -37,7 +47,7 @@ export default function RequestLabTest() {
         const response = await fetch(`${API_URL}/patient`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`, // Include JWT in the headers
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -62,7 +72,7 @@ export default function RequestLabTest() {
   }, [API_URL]);
 
   const handlePatientChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData({ ...formData, patient_id: e.target.value }); // Matches API field
+    setFormData({ ...formData, patient_id: e.target.value });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -81,7 +91,7 @@ export default function RequestLabTest() {
     console.log("Submitting request:", JSON.stringify(formData, null, 2)); // Log before sending
 
     try {
-      const response = await fetch(`${API_URL}/technician`, {
+      const response = await fetch(`${API_URL}/labtest`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -95,13 +105,13 @@ export default function RequestLabTest() {
       if (response.ok) {
         setSuccessMessage("Lab Test Request Sent Successfully!");
         setFormData({
+          id: "",
           test_name: "",
           description: "",
-          cost: 75.5,
-          duration: "1 day",
           sample_type: "",
           is_active: true,
           patient_id: "",
+          results: null,
         });
       } else {
         console.error("Failed to send request:", responseData);
