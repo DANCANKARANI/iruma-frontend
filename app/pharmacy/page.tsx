@@ -11,7 +11,6 @@ import {
   FaHome,
 } from "react-icons/fa";
 import Inventory from "./components/inventory";
-import Orders from "./components/orders";
 import Prescriptions from "./components/prescriptions";
 import Reports from "./components/reports";
 import Messages from "./components/chat";
@@ -34,7 +33,6 @@ export default function PharmacyDashboard() {
         {selectedPage === "Dashboard" && <Dashboard />}
         {selectedPage === "Inventory" && <Inventory />}
         {selectedPage === "Prescriptions" && <Prescriptions />}
-        {selectedPage === "Orders & Sales" && <Orders />}
         {selectedPage === "Messages" && <Messages />}
         {selectedPage === "Reports" && <Reports />}
       </div>
@@ -55,7 +53,6 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "Dashboard", icon: <FaHome /> },
     { name: "Inventory", icon: <FaPills /> },
     { name: "Prescriptions", icon: <FaClipboardList /> },
-    { name: "Orders & Sales", icon: <FaShoppingCart /> },
     { name: "Messages", icon: <FaComments /> },
     { name: "Reports", icon: <FaChartBar /> },
   ];
