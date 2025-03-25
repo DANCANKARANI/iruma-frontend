@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PatientReports from "./reports/patientsReports";
-import DoctorsReports from "./reports/doctorReport";
 import Reports from "@/app/pharmacy/components/reports";
+import ReportsDashboard from "./reports/doctorReport";
 
 export default function AdminReports() {
   // State to manage active report type
@@ -15,7 +15,7 @@ export default function AdminReports() {
       case "pharmacy":
         return <Reports/>
       case "doctors":
-        return <DoctorsReports/>
+        return <ReportsDashboard/>
    
       default:
         return <div>Select a report type to view details.</div>;
@@ -45,7 +45,7 @@ export default function AdminReports() {
           Pharmacy Reports
         </button>
         <button
-          onClick={() => setActiveReport("financial")}
+          onClick={() => setActiveReport("doctors")}
           className={`px-4 py-2 border rounded ${
             activeReport === "financial" ? "bg-blue-600 text-white" : "bg-gray-200"
           }`}

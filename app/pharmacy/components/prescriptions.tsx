@@ -1,43 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { jsPDF } from "jspdf"; // For generating PDFs
+import { useState, useEffect, useCallback } from "react";
+import { jsPDF } from "jspdf";
 
-interface Medicine {
-  id: number;
-  name: string;
-  form: string;
-  in_stock: boolean;
-  created_at: string;
-  updated_at: string;
+interface Patient {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+}
+
+interface Doctor {
+  id: string;
+  full_name: string;
 }
 
 interface Prescription {
   id: string;
+  medicine_name: string;
   patient_id: string;
-  patient: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    phone_number: string;
-    email: string;
-    address: string;
-  };
+  patient: Patient;
   doctor_id: string;
-  doctor: {
-    id: string;
-    full_name: string;
-    phone_number: string;
-    email: string;
-  };
+  doctor: Doctor;
   diagnosis: string;
   dosage: string;
-  frequency: number;
   instructions: string;
-  prescribed_medicines: Medicine[];
-  status: "Pending" | "Fulfilled" | "pending"; // Adjust based on backend values
+  status: "pending" | "Fulfilled"; // Note the exact case from your backend
   created_at: string;
-  updated_at: string;
+  is_given?: boolean;
 }
 
 export default function Prescriptions() {
@@ -47,232 +37,213 @@ export default function Prescriptions() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to get the JWT token from cookies
-  const getJwtToken = () => {
-    const cookies = document.cookie.split("; ");
-    const tokenCookie = cookies.find((cookie) => cookie.startsWith("Authorization="));
-    const token = tokenCookie ? tokenCookie.split("=")[1] : null;
-    return token;
-  };
+  const getJwtToken = useCallback(() => {
+    return document.cookie
+      .split("; ")
+      .find(row => row.startsWith("Authorization="))
+      ?.split("=")[1];
+  }, []);
 
-  // Fetch prescriptions from the backend with filters
-  const fetchPrescriptions = async (filters: { status?: string; patientName?: string }) => {
+  const fetchPrescriptions = useCallback(async () => {
     const jwtToken = getJwtToken();
     if (!jwtToken) {
-      setError("You are not authorized. Please log in.");
+      setError("Authentication required. Please login.");
       setLoading(false);
       return;
     }
 
     try {
-      // Construct query parameters
-      const queryParams = new URLSearchParams();
-      if (filters.status && filters.status !== "All") {
-        queryParams.append("status", filters.status);
-      }
-      if (filters.patientName) {
-        queryParams.append("patient_name", filters.patientName);
-      }
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append("search", searchQuery);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription?${queryParams.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription?${params.toString()}`,
         {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
+          headers: { Authorization: `Bearer ${jwtToken}` },
+          cache: 'no-store'
         }
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch prescriptions");
-      }
+
+      if (!response.ok) throw new Error("Failed to fetch prescriptions");
+      
       const data = await response.json();
-      if (data.success) {
-        setPrescriptions(data.data); // Set the fetched prescriptions
-      } else {
-        throw new Error(data.message || "Failed to fetch prescriptions");
-      }
+      setPrescriptions(data.data.map((prescription: Prescription) => ({
+        ...prescription,
+        is_given: false
+      })));
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
+      setError(err instanceof Error ? err.message : "Failed to fetch prescriptions");
     } finally {
       setLoading(false);
     }
+  }, [getJwtToken, searchQuery]);
+
+  useEffect(() => {
+    fetchPrescriptions();
+  }, [fetchPrescriptions]);
+
+  const toggleMedicineGiven = (prescriptionId: string) => {
+    setPrescriptions(prev => prev.map(prescription => 
+      prescription.id === prescriptionId 
+        ? { ...prescription, is_given: !prescription.is_given } 
+        : prescription
+    ));
   };
 
-  // Fetch prescriptions when filters change
-  useEffect(() => {
-    fetchPrescriptions({ status: filterStatus, patientName: searchQuery });
-  }, [filterStatus, searchQuery]);
-
-  // Handle Prescription Fulfillment
   const fulfillPrescription = async (id: string) => {
     const jwtToken = getJwtToken();
     if (!jwtToken) {
-      setError("You are not authorized. Please log in.");
+      setError("Authentication required. Please login.");
       return;
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({ status: "Fulfilled" }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_ENDPOINT}/prescription/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({ status: "Fulfilled" }),
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error("Failed to update prescription status");
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        // Update the local state to reflect the new status
-        setPrescriptions((prev) =>
-          prev.map((prescription) =>
-            prescription.id === id ? { ...prescription, status: "Fulfilled" } : prescription
-          )
-        );
-      } else {
-        throw new Error(data.message || "Failed to update prescription status");
-      }
+      if (!response.ok) throw new Error("Failed to update prescription status");
+      
+      setPrescriptions(prev =>
+        prev.map(prescription =>
+          prescription.id === id ? { ...prescription, status: "Fulfilled" } : prescription
+        )
+      );
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
+      setError(err instanceof Error ? err.message : "Update failed");
     }
   };
 
-  // Generate PDF for a prescription
   const printPrescription = (prescription: Prescription) => {
     const doc = new jsPDF();
     doc.text(`Prescription for ${prescription.patient.first_name} ${prescription.patient.last_name}`, 20, 20);
     doc.text(`Diagnosis: ${prescription.diagnosis}`, 20, 30);
-    doc.text("Medications:", 20, 40);
-
-    prescription.prescribed_medicines.forEach((med, index) => {
-      doc.text(`${index + 1}. ${med.name} - ${med.form}`, 20, 50 + index * 10);
-    });
-
-    doc.save(`${prescription.patient.first_name}-prescription.pdf`);
+    doc.text(`Medication: ${prescription.medicine_name}`, 20, 40);
+    doc.text(`Dosage: ${prescription.dosage}`, 20, 50);
+    doc.text(`Instructions: ${prescription.instructions}`, 20, 60);
+    doc.save(`prescription-${prescription.id}.pdf`);
   };
 
-  // Filtered prescriptions based on search and status (frontend filtering as fallback)
-  const filteredPrescriptions = prescriptions.filter((p) => {
-    const patientName = `${p.patient.first_name} ${p.patient.last_name}`;
-    return (
-      (filterStatus === "All" || p.status.toLowerCase() === filterStatus.toLowerCase()) &&
-      (patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.diagnosis.toLowerCase().includes(searchQuery.toLowerCase())
-    ));
+  // Optimized filtering - now done client-side
+  const filteredPrescriptions = prescriptions.filter(p => {
+    const matchesStatus = filterStatus === "All" || 
+                         (filterStatus === "Pending" && p.status === "pending") || 
+                         (filterStatus === "Fulfilled" && p.status === "Fulfilled");
+    
+    const matchesSearch = `${p.patient.first_name} ${p.patient.last_name} ${p.diagnosis} ${p.medicine_name}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    
+    return matchesStatus && matchesSearch;
   });
 
-  if (loading) {
-    return <div className="p-6">Loading prescriptions...</div>;
-  }
-
-  if (error) {
-    return <div className="p-6 text-red-600">Error: {error}</div>;
-  }
+  if (loading) return <div className="p-6">Loading prescriptions...</div>;
+  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">📄 Pharmacy Prescriptions</h2>
+      <h2 className="text-2xl font-bold mb-4">Pharmacy Prescriptions</h2>
 
-      {/* Search Bar */}
-      <input
-        type="text"
-        placeholder="🔍 Search by patient name..."
-        className="p-2 border border-gray-300 rounded mb-4 w-full"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-
-      {/* Filter by Status */}
-      <select
-        className="p-2 border border-gray-300 rounded mb-4"
-        value={filterStatus}
-        onChange={(e) => setFilterStatus(e.target.value)}
-      >
-        <option value="All">All Prescriptions</option>
-        <option value="Pending">Pending</option>
-        <option value="Fulfilled">Fulfilled</option>
-      </select>
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search patients, diagnosis or medicine..."
+          className="p-2 border border-gray-300 rounded flex-grow"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        
+        <select
+          className="p-2 border border-gray-300 rounded"
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+        >
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Fulfilled">Fulfilled</option>
+        </select>
+      </div>
 
       {filteredPrescriptions.length === 0 ? (
         <div className="text-gray-600">No prescriptions found.</div>
       ) : (
-        filteredPrescriptions.map((prescription) => (
-          <div key={prescription.id} className="mb-6 p-4 border rounded bg-gray-100">
-            <h3 className="text-lg font-bold">
-              🧑‍⚕️ Patient: {prescription.patient.first_name} {prescription.patient.last_name}
-            </h3>
-            <p className="text-gray-600">Diagnosis: {prescription.diagnosis}</p>
-            <p className="text-gray-600">Doctor: {prescription.doctor.full_name}</p>
-            <p className="text-gray-600">Doctor&apos;s Contact: {prescription.doctor.phone_number}</p>
-            <p className="text-gray-600">Patient&apos;s Contact: {prescription.patient.phone_number}</p>
-            <p className="text-gray-600">Patient&apos;s Address: {prescription.patient.address}</p>
-            <p className="text-gray-600">Prescription Date: {new Date(prescription.created_at).toLocaleDateString()}</p>
+        <div className="space-y-6">
+          {filteredPrescriptions.map((prescription) => (
+            <div key={prescription.id} className="border rounded-lg p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    {prescription.patient.first_name} {prescription.patient.last_name}
+                  </h3>
+                  <p className="text-gray-600">Diagnosis: {prescription.diagnosis}</p>
+                  <p className="text-gray-600">Doctor: {prescription.doctor.full_name}</p>
+                  <p className="text-gray-600">
+                    Date: {new Date(prescription.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-sm ${
+                  prescription.status === "Fulfilled" 
+                    ? "bg-green-100 text-green-800" 
+                    : "bg-yellow-100 text-yellow-800"
+                }`}>
+                  {prescription.status === "pending" ? "Pending" : "Fulfilled"}
+                </span>
+              </div>
 
-            <table className="w-full border-collapse border border-gray-300 mt-4">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border p-2">Medicine</th>
-                  <th className="border p-2">Form</th>
-                  <th className="border p-2">Dosage</th>
-                  <th className="border p-2">Frequency</th>
-                  <th className="border p-2">Instructions</th>
-                  <th className="border p-2">Stock</th>
-                </tr>
-              </thead>
-              <tbody>
-                {prescription.prescribed_medicines.map((medicine) => (
-                  <tr key={medicine.id} className="text-center">
-                    <td className="border p-2">{medicine.name}</td>
-                    <td className="border p-2">{medicine.form}</td>
-                    <td className="border p-2">{prescription.dosage}</td>
-                    <td className="border p-2">{prescription.frequency}</td>
-                    <td className="border p-2">{prescription.instructions}</td>
-                    <td className={`border p-2 font-bold ${medicine.in_stock ? "text-green-600" : "text-red-600"}`}>
-                      {medicine.in_stock ? "✅ Available" : "❌ Out of Stock"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium">Medication Details</h4>
+                  <div className="mt-2 space-y-2">
+                    <p><span className="font-medium">Name:</span> {prescription.medicine_name}</p>
+                    <p><span className="font-medium">Dosage:</span> {prescription.dosage}</p>
+                    <div className="flex items-center">
+                      <span className="font-medium mr-2">Given:</span>
+                      <input
+                        type="checkbox"
+                        checked={prescription.is_given || false}
+                        onChange={() => toggleMedicineGiven(prescription.id)}
+                        className="h-4 w-4"
+                      />
+                    </div>
+                  </div>
+                </div>
 
-            <div className="mt-4 flex gap-4">
-              {/* Status with green color for "Fulfilled" */}
-              <p
-                className={`font-bold ${
-                  prescription.status === "Fulfilled" ? "text-green-600" : "text-yellow-600"
-                }`}
-              >
-                Status: {prescription.status}
-              </p>
-              {prescription.status.toLowerCase() === "pending" && (
+                <div>
+                  <h4 className="font-medium">Instructions</h4>
+                  <p className="mt-2 text-gray-700 whitespace-pre-line">
+                    {prescription.instructions}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex gap-2">
+                {prescription.status === "pending" && (
+                  <button
+                    onClick={() => fulfillPrescription(prescription.id)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Mark as Fulfilled
+                  </button>
+                )}
                 <button
-                  onClick={() => fulfillPrescription(prescription.id)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded"
+                  onClick={() => printPrescription(prescription)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
-                  ✅ Fulfill
+                  Print PDF
                 </button>
-              )}
-              <button
-                onClick={() => printPrescription(prescription)}
-                className="bg-gray-600 text-white px-4 py-2 rounded"
-              >
-                🖨️ Print / Download
-              </button>
+              </div>
             </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

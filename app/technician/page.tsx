@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { FaUsers, FaClipboardList, FaSignOutAlt, FaChartBar } from "react-icons/fa";
-
 import Navbar from "../admin/components/navbar";
 import Cookies from "js-cookie";
 import { Patients } from "../doctor/components/patientManagement";
@@ -16,17 +15,55 @@ export default function LabTechnician() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
   const [labTechName, setLabTechName] = useState("");
 
-  // Fetch lab technician name from token stored in cookies
+  // Fetch lab technician's full name
   useEffect(() => {
-    const token = Cookies.get("token"); // Retrieve token from cookies
-    if (token) {
+    const fetchLabTechName = async () => {
       try {
-        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode JWT
-        setLabTechName(decodedToken.name || "Lab Technician"); // Extract name from the token
+        const token = Cookies.get("Authorization") || Cookies.get("token"); // Check both possible cookie names
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        // First try to get name from JWT token
+        try {
+          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          if (decodedToken.full_name) {
+            setLabTechName(decodedToken.full_name);
+            return;
+          } else if (decodedToken.name) {
+            setLabTechName(decodedToken.name);
+            return;
+          }
+        } catch (e) {
+          console.log("Name not in JWT, fetching from API");
+        }
+
+        // If not in JWT, fetch from API
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch lab technician details");
+        }
+
+        const data = await response.json();
+        if (data.full_name) {
+          setLabTechName(data.full_name);
+        } else if (data.name) {
+          setLabTechName(data.name);
+        } else {
+          throw new Error("Name not found in response");
+        }
       } catch (error) {
-        console.error("Invalid token:", error);
+        console.error("Error fetching lab technician name:", error);
+        setLabTechName("Lab Technician"); // Default fallback
       }
-    }
+    };
+
+    fetchLabTechName();
   }, []);
 
   return (
@@ -36,7 +73,7 @@ export default function LabTechnician() {
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-100">
-        {/* Navbar */}
+        {/* Navbar with lab technician's name */}
         <Navbar name={labTechName} />
 
         {/* Page Content */}
@@ -64,7 +101,7 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
     { name: "Dashboard", icon: <FaUsers /> },
     { name: "Patients", icon: <FaUsers /> },
     { name: "LabTestRequests", icon: <FaClipboardList /> },
-    { name: "Reports", icon: <FaChartBar /> }, // Added Reports button
+    { name: "Reports", icon: <FaChartBar /> },
   ];
 
   return (

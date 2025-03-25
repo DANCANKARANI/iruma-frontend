@@ -91,7 +91,7 @@ export default function PharmacistChat() {
 
   return (
     <div className="flex flex-col h-screen p-6 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4">💬 Chat with Doctor</h1>
+      <h1 className="text-2xl font-bold mb-4">💬 Chat with Clinical Officer</h1>
 
       <div className="flex-1 overflow-y-auto bg-white p-4 rounded-lg shadow-md">
         {messages.map((message) => (

@@ -37,7 +37,6 @@ export default function Sidebar() {
           <SidebarItem href="/doctor/messages" icon={<FaComments />} text="Messages" isOpen={isOpen} />
           <SidebarItem href="/doctor/reports" icon={<FaChartBar />} text="Reports" isOpen={isOpen} />
           <SidebarItem href="/doctor/request-labtest" icon={<FaFlask />} text="Request Lab Test" isOpen={isOpen} />
-          <SidebarItem href="/doctor/settings" icon={<FaCog />} text="Settings" isOpen={isOpen} />
         </ul>
       </nav>
 

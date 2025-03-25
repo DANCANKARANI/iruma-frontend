@@ -9,8 +9,9 @@ import {
   FaChartBar,
   FaCog,
   FaSignOutAlt,
-  FaFlask, // Request Lab Test Icon
-  FaFileMedical // View Uploaded Lab Tests Icon
+  FaFlask,
+  FaFileMedical,
+  FaStickyNote
 } from "react-icons/fa";
 import { Patients } from "./components/patientManagement";
 import { Prescriptions } from "./components/prescription";
@@ -21,28 +22,61 @@ import Messages from "./components/chat";
 import RequestLabTest from "./components/requestTest";
 import ReferPatient from "../reception/component/referPatient";
 import ViewLabTests from "./components/viewLabTests";
+import AddNotes from "./components/notes";
 
 // Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Clinical Officer&apos;s Dashboard</div>;
 const Billing = () => <div>💰 Billing and Payments</div>;
 const Settings = () => <div>⚙️ CO&apos;s Settings</div>;
 
-
 export default function DoctorDashboard() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
   const [doctorName, setDoctorName] = useState("");
 
-  // Fetch doctor name from token stored in cookies
+  // Fetch doctor's full name
   useEffect(() => {
-    const token = Cookies.get("Authorization"); // Retrieve token from cookies
-    if (token) {
+    const fetchDoctorName = async () => {
       try {
-        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode JWT
-        setDoctorName(decodedToken.name || "Doctor"); // Extract name from the token
+        const token = Cookies.get("Authorization");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        // First try to get name from JWT token
+        try {
+          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          if (decodedToken.full_name) {
+            setDoctorName(decodedToken.full_name);
+            return;
+          }
+        } catch (e) {
+          console.log("Name not in JWT, fetching from API");
+        }
+
+        // If not in JWT, fetch from API
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/doctor/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch doctor details");
+        }
+
+        const data = await response.json();
+        if (data.full_name) {
+          setDoctorName(data.full_name);
+        } else {
+          throw new Error("Full name not found in response");
+        }
       } catch (error) {
-        console.error("Invalid token:", error);
+        console.error("Error fetching doctor name:", error);
+        setDoctorName("Doctor"); // Default fallback
       }
-    }
+    };
+
+    fetchDoctorName();
   }, []);
 
   return (
@@ -52,7 +86,7 @@ export default function DoctorDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 bg-gray-100">
-        {/* Navbar */}
+        {/* Navbar with doctor's full name */}
         <Navbar name={doctorName} />
 
         {/* Page Content */}
@@ -66,14 +100,14 @@ export default function DoctorDashboard() {
           {selectedPage === "Billing" && <Billing />}
           {selectedPage === "Messages" && <Messages />}
           {selectedPage === "Reports" && <Reports />}
-          {selectedPage === "Settings" && <Settings />}
+          {selectedPage === "Add Notes" && <AddNotes />}
         </div>
       </div>
     </div>
   );
 }
 
-// Sidebar Component
+// Sidebar Component remains the same
 interface SidebarProps {
   selectedPage: string;
   setSelectedPage: (page: string) => void;
@@ -85,6 +119,7 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
   const menuItems = [
     { name: "Dashboard", icon: <FaUserMd /> },
     { name: "Patients", icon: <FaUsers /> },
+    { name: "Add Notes", icon: <FaStickyNote /> },
     { name: "Request Lab Test", icon: <FaFlask /> },
     { name: "View Lab Tests", icon: <FaFileMedical /> },
     { name: "Prescriptions", icon: <FaClipboardList /> },

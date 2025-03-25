@@ -218,11 +218,11 @@ export default function Sidebar({ onSelect }: { onSelect: (view: string) => void
         </button>
 
         <button
-          onClick={() => onSelect("change-mode")}
+          onClick={() => onSelect("logout")}
           className="flex items-center justify-start w-full px-4 py-2 text-sm hover:bg-blue-800 rounded border border-gray-600"
         >
           <FaAdjust className="mr-4" />
-          {isSidebarOpen && <span>Change Mode</span>}
+          {isSidebarOpen && <span>Logout</span>}
         </button>
       </nav>
 

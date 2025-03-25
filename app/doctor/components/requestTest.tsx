@@ -172,40 +172,29 @@ export default function RequestLabTest() {
         {/* Test Name Dropdown */}
         <div>
           <label className="block text-gray-700 font-semibold">Test Name</label>
-          <select
+          <textarea
             name="test_name"
             value={formData.test_name}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-500 text-gray-800"
             required
           >
-            <option value="">Select a Test</option>
-            <option value="Complete Blood Count">Complete Blood Count</option>
-            <option value="Urine Analysis">Urine Analysis</option>
-            <option value="X-Ray">X-Ray</option>
-            <option value="MRI Scan">MRI Scan</option>
-            <option value="CT Scan">CT Scan</option>
-          </select>
+           </textarea>
         </div>
 
-        {/* Sample Type Dropdown */}
+        {/* Sample Type Dropdown 
         <div>
           <label className="block text-gray-700 font-semibold">Sample Type</label>
-          <select
+          <textarea
             name="sample_type"
             value={formData.sample_type}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:border-blue-500 text-gray-800"
             required
           >
-            <option value="">Select Sample Type</option>
-            <option value="Blood">Blood</option>
-            <option value="Urine">Urine</option>
-            <option value="Saliva">Saliva</option>
-            <option value="Tissue">Tissue</option>
-          </select>
+          </textarea>
         </div>
-
+*/}
         {/* Description */}
         <div>
           <label className="block text-gray-700 font-semibold">Description</label>

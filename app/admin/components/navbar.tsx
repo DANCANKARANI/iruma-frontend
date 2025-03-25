@@ -30,21 +30,16 @@ export default function Navbar({ name }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between bg-white px-4 py-3 shadow">
-      <input
-        type="text"
-        placeholder="Search for anything here..."
-        className="border px-4 py-2 rounded text-sm w-1/3"
-      />
+      {/* Left side can be used for other elements if needed */}
+      <div></div>
+      
+      {/* Right-aligned greeting and user profile */}
       <div className="flex items-center space-x-4">
-        <p>
-          {greeting} {name} {/* Display the greeting and user's name */}
-        </p>
         <div className="flex items-center">
-          {/* Replace the image with a profile icon */}
+          <p className="mr-4">
+            {greeting}, {name} {/* Display the greeting and user's name */}
+          </p>
           <FaUserCircle className="text-3xl text-gray-500" />
-          <div className="ml-2 text-sm">
-            <p className="font-bold">{name}</p> {/* Display the user's name */}
-          </div>
         </div>
       </div>
     </header>

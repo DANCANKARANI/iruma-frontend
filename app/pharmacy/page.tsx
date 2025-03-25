@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaPills,
   FaClipboardList,
@@ -13,39 +13,112 @@ import Inventory from "./components/inventory";
 import Prescriptions from "./components/prescriptions";
 import Reports from "./components/reports";
 import Messages from "./components/chat";
-
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import Navbar from "../admin/components/navbar";
 
 // Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Pharmacy Dashboard</div>;
 
-
 export default function PharmacyDashboard() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
+  const [pharmacistName, setPharmacistName] = useState("");
+  const router = useRouter();
+
+  // Fetch pharmacist's full name
+  useEffect(() => {
+    const fetchPharmacistName = async () => {
+      try {
+        const token = Cookies.get("Authorization");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        // First try to get name from JWT token
+        try {
+          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          if (decodedToken.full_name) {
+            setPharmacistName(decodedToken.full_name);
+            return;
+          }
+        } catch (e) {
+          console.log("Name not in JWT, fetching from API");
+        }
+
+        // If not in JWT, fetch from API
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch pharmacist details");
+        }
+
+        const data = await response.json();
+        if (data.full_name) {
+          setPharmacistName(data.full_name);
+        } else {
+          throw new Error("Full name not found in response");
+        }
+      } catch (error) {
+        console.error("Error fetching pharmacist name:", error);
+        setPharmacistName("Pharmacist"); // Default fallback
+      }
+    };
+
+    fetchPharmacistName();
+  }, []);
+
+  // Logout function
+  const handleLogout = () => {
+    // Clear all authentication tokens
+    Cookies.remove("Authorization");
+    Cookies.remove("token");
+    
+    // Clear any client-side storage
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("session");
+    
+    // Redirect to login page
+    router.push("/");
+    router.refresh(); // Ensure client cache is cleared
+  };
 
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <Sidebar selectedPage={selectedPage} setSelectedPage={setSelectedPage} />
+      <Sidebar 
+        selectedPage={selectedPage} 
+        setSelectedPage={setSelectedPage}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-100">
-        {selectedPage === "Dashboard" && <Dashboard />}
-        {selectedPage === "Inventory" && <Inventory />}
-        {selectedPage === "Prescriptions" && <Prescriptions />}
-        {selectedPage === "Messages" && <Messages />}
-        {selectedPage === "Reports" && <Reports />}
+      <div className="flex-1 bg-gray-100">
+        {/* Navbar with pharmacist's full name */}
+        <Navbar name={pharmacistName} />
+
+        <div className="p-6">
+          {selectedPage === "Dashboard" && <Dashboard />}
+          {selectedPage === "Inventory" && <Inventory />}
+          {selectedPage === "Prescriptions" && <Prescriptions />}
+          {selectedPage === "Messages" && <Messages />}
+          {selectedPage === "Reports" && <Reports />}
+        </div>
       </div>
     </div>
   );
 }
 
-// Sidebar Component
 interface SidebarProps {
   selectedPage: string;
   setSelectedPage: (page: string) => void;
+  onLogout: () => void;
 }
 
-const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
+const Sidebar = ({ selectedPage, setSelectedPage, onLogout }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [
@@ -87,7 +160,10 @@ const Sidebar = ({ selectedPage, setSelectedPage }: SidebarProps) => {
 
       {/* Logout Button */}
       <div className="p-4 border-t border-blue-700">
-        <button className="flex items-center space-x-4 p-2 hover:bg-blue-700 rounded w-full">
+        <button 
+          onClick={onLogout}
+          className="flex items-center space-x-4 p-2 hover:bg-blue-700 rounded w-full"
+        >
           <FaSignOutAlt />
           {isOpen && <span>Logout</span>}
         </button>
