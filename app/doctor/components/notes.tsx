@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 
 interface Patient {
   id: string;
