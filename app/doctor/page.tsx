@@ -27,7 +27,6 @@ import AddNotes from "./components/notes";
 // Components for each section
 const Dashboard = () => <div>🏥 Welcome to the Clinical Officer&apos;s Dashboard</div>;
 const Billing = () => <div>💰 Billing and Payments</div>;
-const Settings = () => <div>⚙️ CO&apos;s Settings</div>;
 
 export default function DoctorDashboard() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
@@ -50,7 +49,7 @@ export default function DoctorDashboard() {
             return;
           }
         } catch (e) {
-          console.log("Name not in JWT, fetching from API");
+          console.log("Name not in JWT, fetching from API",e);
         }
 
         // If not in JWT, fetch from API

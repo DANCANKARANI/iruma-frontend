@@ -11,16 +11,9 @@ interface Patient {
   phone_number: string;
 }
 
-interface Note {
-  id: string;
-  notes: string;
-  patient_id: string;
-  created_at: string;
-  updated_at: string;
-}
+
 
 export default function AddNotes() {
-  const router = useRouter();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>("");
   const [noteContent, setNoteContent] = useState("");

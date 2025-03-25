@@ -51,7 +51,7 @@ export default function Reports() {
             setUserName(decodedToken.name);
           }
         } catch (e) {
-          console.log("Name not in JWT");
+          console.log("Name not in JWT",e);
         }
       } catch (error) {
         console.error("Error fetching user name:", error);

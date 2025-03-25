@@ -9,7 +9,6 @@ import {
   FaFileInvoiceDollar,
   FaComments,
   FaChartBar,
-  FaCog,
   FaSignOutAlt,
   FaFlask, // Lab Test Icon
 } from "react-icons/fa";

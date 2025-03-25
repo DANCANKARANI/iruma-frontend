@@ -35,7 +35,7 @@ export default function LabTechnician() {
             return;
           }
         } catch (e) {
-          console.log("Name not in JWT, fetching from API");
+          console.log("Name not in JWT, fetching from API",e);
         }
 
         // If not in JWT, fetch from API
