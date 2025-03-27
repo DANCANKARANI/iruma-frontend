@@ -276,11 +276,11 @@ export default function ReportsDashboard() {
               </div>
             </div>
             <div className="mt-6 bg-white p-4 rounded shadow-md overflow-x-auto">
-              <h2 className="text-xl font-bold mb-4">Doctors List</h2>
+              <h2 className="text-xl font-bold mb-4">C.Os List</h2>
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-200">
-                    <th className="p-2 border">Doctor</th>
+                    <th className="p-2 border">C.O</th>
                     <th className="p-2 border">Patients Seen</th>
                     <th className="p-2 border">Average Rating</th>
                   </tr>
@@ -320,7 +320,7 @@ export default function ReportsDashboard() {
                 <thead>
                   <tr className="bg-gray-200">
                     <th className="p-2 border">Patient</th>
-                    <th className="p-2 border">Doctor</th>
+                    <th className="p-2 border">C.O</th>
                     <th className="p-2 border">Status</th>
                     <th className="p-2 border">Date</th>
                   </tr>
@@ -400,7 +400,7 @@ export default function ReportsDashboard() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-white p-4 rounded shadow-md text-center">
-                <h2 className="text-xl font-semibold text-blue-600">Total Doctors</h2>
+                <h2 className="text-xl font-semibold text-blue-600">Total Clinical Officers</h2>
                 <p className="text-2xl font-bold">{totalDoctors}</p>
               </div>
               <div className="bg-white p-4 rounded shadow-md text-center">
@@ -414,7 +414,7 @@ export default function ReportsDashboard() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
               <div className="bg-white p-4 rounded shadow-md">
-                <h2 className="text-lg font-semibold mb-4">Doctors Performance</h2>
+                <h2 className="text-lg font-semibold mb-4">Clinical Officers Performance</h2>
                 <div className="h-[300px]">
                   <Bar data={barChartData} options={{ responsive: true, maintainAspectRatio: false }} />
                 </div>
