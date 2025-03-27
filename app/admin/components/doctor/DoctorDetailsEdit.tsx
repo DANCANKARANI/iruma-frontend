@@ -45,7 +45,7 @@ const DoctorDetailsEdit: React.FC<DoctorDetailsEditProps> = ({
       <div className="bg-white p-6 rounded shadow-lg w-1/3">
         {isEditing ? (
           <>
-            <h2 className="text-xl font-bold mb-4">Edit Doctor</h2>
+            <h2 className="text-xl font-bold mb-4">Edit C.O</h2>
             <form onSubmit={handleSubmit}>
               <input
                 type="text"
@@ -79,7 +79,7 @@ const DoctorDetailsEdit: React.FC<DoctorDetailsEditProps> = ({
                 type="text"
                 name="role"
                 className="w-full p-2 mb-2 border rounded"
-                value={formData.role}
+                value={"doctor"}
                 onChange={handleChange}
               />
               <input

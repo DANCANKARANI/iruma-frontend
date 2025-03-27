@@ -35,13 +35,13 @@ const sections = [
   },
   {
     id: "view-doctor",
-    label: "View Doctor",
+    label: "View C.O",
     icon: FaEye,
     description: "View all doctors",
   },
   {
     id: "add-doctor",
-    label: "Add Doctor",
+    label: "Add C.O",
     icon: FaPlus,
     description: "Add a new doctor",
   },
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
         return <AddDoctor/>
       case "reports":
         return <Reports/>
-      case "settings":
+      case "settings": 
         return <div>Application Settings Section</div>;
       case "change-mode":
         return <div>Change Mode Section</div>;

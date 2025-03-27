@@ -100,40 +100,53 @@ export default function ViewDoctors() {
     setIsEditing(true);
   };
 
-  const handleSave = async (updatedDoctor: Doctor) => {
+  const handleSave = async (updatedDoctor: Partial<Doctor>) => {
     if (!token) {
-      setError("No JWT token found in cookies");
+      setError("Authentication required");
       return;
     }
-
+  
     try {
+      // Create payload with only editable fields
+      const payload = {
+        full_name: updatedDoctor.full_name,
+        phone_number: updatedDoctor.phone_number,
+        address: updatedDoctor.address,
+        gender: updatedDoctor.gender,
+        date_of_birth: updatedDoctor.date_of_birth
+      };
+  
+      console.log("Sending update payload:", payload);
+      
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_ENDPOINT}/admin/doctor/${updatedDoctor.id}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(updatedDoctor),
+          body: JSON.stringify(payload),
         }
       );
+  
+      const responseData = await response.json();
+      
       if (!response.ok) {
-        throw new Error("Failed to save doctor details");
+        console.error("Update failed with status:", response.status);
+        console.error("Response:", responseData);
+        throw new Error(responseData.message || "Update failed");
       }
-      const updatedDoctorData = await response.json();
-      setDoctors((prev) =>
-        prev.map((doctor) => (doctor.id === updatedDoctorData.id ? updatedDoctorData : doctor))
-      );
+  
+      console.log("Update successful:", responseData);
+      setDoctors(prev => prev.map(d => d.id === responseData.id ? responseData : d));
       setSelectedDoctor(null);
       setIsEditing(false);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unknown error occurred");
-      }
-    }    
+      
+    } catch (err) {
+      console.error("Update error:", err);
+      setError(err instanceof Error ? err.message : "Update failed. Please try again.");
+    }
   };
 
   const handleDelete = (doctor: Doctor) => {
@@ -180,7 +193,7 @@ export default function ViewDoctors() {
 
   return (
     <div className="p-4 h-full overflow-hidden flex flex-col">
-      <h1 className="text-2xl font-bold mb-4">Doctors</h1>
+      <h1 className="text-2xl font-bold mb-4">Clinical Officers</h1>
 
       {/* Search Bar */}
       <div className="mb-4">
@@ -205,7 +218,7 @@ export default function ViewDoctors() {
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-100 sticky top-0">
-                <th className="border border-gray-300 p-2">#</th>
+                <th className="border border-gray-300 p-2">No.</th>
                 <th className="border border-gray-300 p-2">Full Name</th>
                 <th className="border border-gray-300 p-2">Email</th>
                 <th className="border border-gray-300 p-2">Phone Number</th>
